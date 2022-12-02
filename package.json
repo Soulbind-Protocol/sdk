@@ -1,0 +1,36 @@
+{
+  "name": "@soulbind/sdk",
+  "version": "0.1.0",
+  "description": "Soulbind SDK",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "unpkg": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.js",
+    "default": "./dist/index.modern.js"
+  },
+  "scripts": {
+    "build": "rm -rf dist && microbundle --tsconfig tsconfig.json --no-sourcemap",
+    "dev": "microbundle --watch --tsconfig tsconfig.json --no-sourcemap",
+    "publish": "npm publish --access public"
+  },
+  "keywords": [
+    "soulbind",
+    "sdk",
+    "sbt",
+    "sbts",
+    "identity"
+  ],
+  "author": "andrew@soulbind.app",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "microbundle": "0.15.0"
+  },
+  "dependencies": {
+    "isomorphic-unfetch": "^3.1.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
