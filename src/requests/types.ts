@@ -26,6 +26,27 @@ export enum ClaimStatus {
 }
 
 // Interfaces
+export interface ApiResponse<T> {
+  error?: any,
+  errorCode?: ErrorCode,
+  success?: T;
+}
+
+
+export interface ClaimRequest {
+  address: string;
+  id: string;
+  signature: string
+  uniqueCode?: string;
+}
+
+export enum ErrorCode {
+  entityExists = 'Entity already exists',
+  entityDoesntExist = 'Entity does NOT exists',
+  invalidRequest = 'Invalid request',
+  unauthorized = 'Unauthorized',
+}
+
 export interface IssuedTo {
   to: string; // email address or wallet address
   status: ClaimStatus;
