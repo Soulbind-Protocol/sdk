@@ -70,6 +70,27 @@ soulbind.getCreatedToken('EventIdHere').then((tokenData) => {
 });
 ```
 
+### getSignatureMessage - _required with most txn_
+
+Construct a formatted message to be signed by user and passed to soulbind txn methods.
+
+```js
+  const signatureMessage = soulbind.getSignatureMessage(address);
+  
+  // This example uses ethers.js and Infura to get a signer.
+  const provider = new ethers.providers.InfuraProvider(
+    process.env.EVM_NETWORK,
+    process.env.INFURA_API_KEY
+  );
+  const signer = new ethers.Wallet({ address: process.env.SIGNER_ADDRESS as string, privateKey: process.env.SIGNER_KEY as string }, provider);
+  const address = await signer.getAddress();
+
+  // Using your signer, get the user to sign the signatureMessage from above.
+  const signature = await signer.signMessage(signatureMessage);
+
+  // Pass signature to Soulbind txn methods
+```
+
 ## Models
 
 ### BurnAuth
