@@ -30,7 +30,7 @@ import Soulbind from '@soulbind/sdk';
 const Soulbind = require('@soulbind/sdk');
 ```
 
-### Evoke
+### Invoke
 
 ```js
 ...
