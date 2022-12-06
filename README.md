@@ -2,6 +2,12 @@
 
 A complete soulbound token solution in JavaScript (and TypeScript).
 
+<!-- ## Table of Contents -->
+
+<!-- ## Preface
+
+### Definitions -->
+
 ## Installation
 
 ### Using NPM
@@ -33,65 +39,151 @@ const soulbind = new Soulbind({
     apiKey: 'YourApiKeyHere',
 });
 
-soulbind.getCreatedToken('EventIdHere').then((tokenData) => {
-    console.log(tokenData)
-});
-// Output
-// {
-//     eventData,
-//     metaData,
-//     issuedTo,
-// }
+const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3259aec9b');
+console.log(success);
+// Output: TokenData[]
 ```
 
 ## Methods
 
-### claimToken
+### burn
 
-Claim a token for a given wallet address and signer
+Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Burn a token for a given wallet address
 
 ```js
 const receiverAddress = await signer.getAddress();
 const receiverSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
 
-soulbind.claimToken('EventIdHere', 'ReceiverAddress', 'ReceiverSignature').then((response) => {
-  console.log(response.success);
-  // Output: true
-});
+const { success } = await soulbind.burn(
+  'EventIdHere',
+  'TokenIdHere',
+  receiverAddress,
+  receiverSignature
+);
+console.log(success);
+// Output: true
 ```
+
+### checkClaimAuthAddress
+
+Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Validate if an address has rights to claim a token.
+
+```js
+const eventId = 'EventIdHere';
+const address = 'AddressHere';
+
+const { success } = await soulbind.checkClaimAuthAddress(eventId, address);
+console.log(success);
+// Output: true/false
+```
+
+### checkClaimAuthCode
+
+Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Validate if a unique code has rights to claim a token.
+
+```js
+const eventId = 'EventIdHere';
+const code = 'CodeHere';
+
+const { success } = await soulbind.checkClaimAuthCode(eventId, code);
+console.log(success);
+// Output: true/false
+```
+
+### claim
+
+Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Mint SBT to given address
+
+```js
+const receiverAddress = await signer.getAddress();
+const receiverSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
+
+const { success } = await soulbind.claim('EventIdHere', receiverAddress, receiverSignature);
+console.log(success);
+// Output: true
+```
+
+### create (coming soon)
+
+Create a token event.
+**NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create)
 
 ### getCreatedToken
 
-Returns an on-chain event (aka token shell)
+Returns: Promise<[TokenDataResponse](#tokendataresponse)>
+
+Get a created SBT event - use when you need the most current data directly from chain
 
 ```js
-soulbind.getCreatedToken('EventIdHere').then((tokenData) => {
-  console.log(tokenData);
-});
+const eventId = 'EventIdHere';
+const optionalTokenId = 'TokenIdHere';
+
+const tokenData = await soulbind.getCreatedToken(eventId, optionalTokenId);
+console.log(tokenData);
+// Output: TokenDataResponse
 ```
 
-### getSignatureMessage - _required with most txn_
+### getSignatureMessage
+
+**NOTE:** _required with most txn_
 
 Construct a formatted message to be signed by user and passed to soulbind txn methods.
 
 ```js
+  // Specific signature message used below
   const signatureMessage = soulbind.getSignatureMessage(address);
-  
-  // This example uses ethers.js and Infura to get a signer.
+
+  // This example uses ethers.js and Infura to get a signer - use w/e method you currently have to get a signer.
   const provider = new ethers.providers.InfuraProvider(
     process.env.EVM_NETWORK,
     process.env.INFURA_API_KEY
   );
-  const signer = new ethers.Wallet({ address: process.env.SIGNER_ADDRESS as string, privateKey: process.env.SIGNER_KEY as string }, provider);
+  const signer = new ethers.Wallet(
+    {
+    address: process.env.SIGNER_ADDRESS as string,
+    privateKey: process.env.SIGNER_KEY as string
+    }, provider);
   const address = await signer.getAddress();
 
   // Using your signer, get the user to sign the signatureMessage from above.
   const signature = await signer.signMessage(signatureMessage);
 
   // Pass signature to Soulbind txn methods
+  ...
+```
+
+### getTokens
+
+Returns: Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
+
+Get all SBTs for an address.
+
+```js
+const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3259aec9b');
+console.log(success);
+// Output: TokenData[]
 ```
 
 ## Models
+
+### ApiResponse
+
+```js
+interface ApiResponse<T> {
+  error?: any;
+  errorCode?: ErrorCode;
+  success?: T;
+}
+```
+Reference: [ErrorCode](#errorcode)
 
 ### BurnAuth
 
@@ -115,6 +207,17 @@ enum ClaimStatus {
 }
 ```
 
+### ErrorCode
+
+```js
+enum ErrorCode {
+  entityExists = 'Entity already exists',
+  entityDoesntExist = 'Entity does NOT exists',
+  invalidRequest = 'Invalid request',
+  unauthorized = 'Unauthorized',
+}
+```
+
 ### IssuedTo
 
 ```js
@@ -126,6 +229,7 @@ interface IssuedTo {
   tokenId?: number | undefined;
 }
 ```
+Reference: [ClaimStatus](#claimstatus)
 
 ### RequestMethod
 
@@ -146,7 +250,17 @@ interface SbtMetadata {
   external_url: string;
   image: string; // IPFS URI or Back Image data
   name: string;
-  attributes: TokenAttributes;
+  attributes: TokenAttributes[];
+}
+```
+Reference: [TokenAttributes](#tokenattributes)
+
+### TokenAttributes
+
+```js
+interface TokenAttributes {
+  trait_type: string;
+  value: string;
 }
 ```
 
@@ -154,15 +268,19 @@ interface SbtMetadata {
 
 ```js
 interface TokenData {
-  boe: boolean;
-  burnAuth: BurnAuth;
-  count: number;
-  limit: number;
-  owner: string;
-  restricted: boolean;
-  uri: string;
+  boe: boolean; // Bind on equip. Makes the token an NFT (true) or SBT (false)
+  contract: string; // The contract that this token was minted on - for backwards compatability
+  created: number;
+  id: string; // eventId
+  idHash: string; // hash of eventId
+  issuedTo: IssuedTo[]; // both email and wallet addresses live here
+  metaData: SbtMetadata;
+  owner: string; // issuer wallet address
+  restricted: boolean; // Pre-issued tokens = true
+  txnHash: string; // Hash of the create transaction
 }
 ```
+Reference: [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata)
 
 ### TokenDataResponse
 
@@ -173,3 +291,4 @@ interface TokenDataResponse {
   issuedTo?: IssuedTo[];
 }
 ```
+Reference: [TokenData](#tokendata), [SbtMetadata](#sbtmetadata), [IssuedTo](#issuedto)

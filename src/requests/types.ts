@@ -1,15 +1,3 @@
-/**
- * Internal
- */
-interface TokenAttributes {
-  trait_type: string;
-  value: string;
-}
-
-/**
- * External
- */
-
 // Enums
 export enum BurnAuth {
   IssuerOnly,
@@ -32,12 +20,41 @@ export interface ApiResponse<T> {
   success?: T;
 }
 
+export interface BindRequest {
+  address: string;
+  eventId: string;
+  signature: string;
+  tokenId: string;
+}
+
+export interface BurnRequest {
+  address: string;
+  eventId: string;
+  signature: string;
+  tokenId: string;
+}
 
 export interface ClaimRequest {
   address: string;
   id: string;
   signature: string
   uniqueCode?: string;
+}
+
+export interface CreateRequest {
+  id: string // EventId
+  tokenUri: string;
+  boe: boolean;
+  burnAuth: BurnAuth;
+  address: string;
+  signature: string;
+  restricted: boolean;
+  metaData: SbtMetadata;
+  // non-issued
+  tokenLimit?: number,
+  // pre-issued
+  issuedToWalletAddresses?: IssuedTo[],
+  issuedToCodes?: IssuedTo[],
 }
 
 export enum ErrorCode {
@@ -67,17 +84,25 @@ export interface SbtMetadata {
   external_url: string;
   image: string; // IPFS URI or Back Image data
   name: string;
-  attributes: TokenAttributes;
+  attributes: TokenAttributes[];
+}
+
+export interface TokenAttributes {
+  trait_type: string;
+  value: string;
 }
 
 export interface TokenData {
-  boe: boolean;
-  burnAuth: BurnAuth;
-  count: number;
-  limit: number;
-  owner: string;
-  restricted: boolean;
-  uri: string;
+  boe: boolean; // Bind on equip. Makes the token an NFT (true) or SBT (false)
+  contract: string; // The contract that this token was minted on - for backwards compatability
+  created: number;
+  id: string; // eventId
+  idHash: string; // hash of eventId
+  issuedTo: IssuedTo[]; // both email and wallet addresses live here
+  metaData: SbtMetadata;
+  owner: string; // issuer wallet address
+  restricted: boolean; // Pre-issued tokens = true
+  txnHash: string; // Hash of the create transaction
 }
 
 export interface TokenDataResponse {

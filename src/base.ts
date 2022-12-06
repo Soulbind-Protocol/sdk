@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import fetch from "isomorphic-unfetch";
 
 type Config = {
@@ -13,15 +12,6 @@ export abstract class Base {
   constructor(config: Config) {
     this.apiKey = config.apiKey;
     this.baseUrl = config.baseUrl || "https://api.soulbind.app/api";
-  }
-
-  public getSignatureMessage(address: string): Uint8Array {
-    let messageHash = ethers.utils.solidityKeccak256(
-      ["address"],
-      [address]
-    );
-
-    return ethers.utils.arrayify(messageHash);
   }
 
   async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
