@@ -118,7 +118,7 @@ Create a token event.
 
 ### getCreatedToken
 
-Returns: Promise<[TokenDataResponse](#tokendataresponse)>
+Returns: Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
 
 Get a created SBT event - use when you need the most current data directly from chain
 

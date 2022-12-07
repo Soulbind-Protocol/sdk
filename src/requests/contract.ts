@@ -58,7 +58,7 @@ export class Contract extends Base {
   * @returns: {eventData, metaData, issuedTo?}
   * @dev: Get a created SBT event - use when you need the most current data directly from chain.
   */
-  public getCreatedToken(eventId: string, tokenId?: string): Promise<TokenDataResponse> {
+  public getCreatedToken(eventId: string, tokenId?: string): Promise<ApiResponse<TokenDataResponse>> {
     return this.request(`${versionPath}/created-token/${eventId}`, {
       method: RequestMethod.post,
       body: JSON.stringify(tokenId),
