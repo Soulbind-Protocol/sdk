@@ -108,7 +108,7 @@ const receiverSignature = await signer.signMessage(soulbind.getSignatureMessage(
 
 const { success } = await soulbind.claim('EventIdHere', receiverAddress, receiverSignature);
 console.log(success);
-// Output: true
+// Output: tokenId
 ```
 
 ### create (coming soon)

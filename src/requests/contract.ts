@@ -128,10 +128,10 @@ export class Contract extends Base {
    * @param address: address of receiver.
    * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
    * @param uniqueCode: (optional) code for restricted token.
-   * @returns: {success?: boolean; error?: any, errorCode?: ErrorCode}
+   * @returns: {success?: 'tokenId'; error?: any, errorCode?: ErrorCode}
    * * @dev: Mint SBT to given address
    */
-  public async claim(eventId: string, address: string, signature: string, uniqueCode?: string): Promise<ApiResponse<boolean>> {
+  public async claim(eventId: string, address: string, signature: string, uniqueCode?: string): Promise<ApiResponse<string>> {
     const claimRequest: ClaimRequest = {
       signature,
       id: eventId,
