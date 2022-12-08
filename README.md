@@ -135,7 +135,7 @@ console.log(tokenData);
 
 **NOTE:** _required with most txn_
 
-Construct a formatted message to be signed by user and passed to soulbind txn methods.
+Construct a formatted message to be signed by user and passed to Soulbind txn methods.
 
 ```js
   // Specific signature message used below
@@ -269,18 +269,21 @@ interface TokenAttributes {
 ```js
 interface TokenData {
   boe: boolean; // Bind on equip. Makes the token an NFT (true) or SBT (false)
+  burnAuth: BurnAuth;
+  count: number;
   contract: string; // The contract that this token was minted on - for backwards compatability
   created: number;
   id: string; // eventId
   idHash: string; // hash of eventId
   issuedTo: IssuedTo[]; // both email and wallet addresses live here
+  limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
   restricted: boolean; // Pre-issued tokens = true
   txnHash: string; // Hash of the create transaction
 }
 ```
-Reference: [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata)
+Reference: [BurnAuth](#burnauth), [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata)
 
 ### TokenDataResponse
 

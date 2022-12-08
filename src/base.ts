@@ -1,4 +1,4 @@
-import fetch from "isomorphic-unfetch";
+import fetch from 'isomorphic-unfetch';
 
 type Config = {
   apiKey: string;
@@ -11,15 +11,15 @@ export abstract class Base {
 
   constructor(config: Config) {
     this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || "https://api.soulbind.app/api";
+    this.baseUrl = config.baseUrl || 'https://api.soulbind.app/api';
   }
 
   async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
     const headers = {
-      "Content-Type": "application/json",
-      "soulbind-api-key": this.apiKey,
+      'Content-Type': 'application/json',
+      'soulbind-api-key': this.apiKey,
     };
     const config = {
       ...options,

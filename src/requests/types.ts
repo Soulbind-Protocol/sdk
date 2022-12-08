@@ -13,6 +13,13 @@ export enum ClaimStatus {
   burned
 }
 
+export enum ErrorCode {
+  entityExists = 'Entity already exists',
+  entityDoesntExist = 'Entity does NOT exists',
+  invalidRequest = 'Invalid request',
+  unauthorized = 'Unauthorized',
+}
+
 // Interfaces
 export interface ApiResponse<T> {
   error?: any,
@@ -57,13 +64,6 @@ export interface CreateRequest {
   issuedToCodes?: IssuedTo[],
 }
 
-export enum ErrorCode {
-  entityExists = 'Entity already exists',
-  entityDoesntExist = 'Entity does NOT exists',
-  invalidRequest = 'Invalid request',
-  unauthorized = 'Unauthorized',
-}
-
 export interface IssuedTo {
   to: string; // email address or wallet address
   status: ClaimStatus;
@@ -82,7 +82,7 @@ export enum RequestMethod {
 export interface SbtMetadata {
   description: string;
   external_url: string;
-  image: string; // IPFS URI or Back Image data
+  image: string; // IPFS URI
   name: string;
   attributes: TokenAttributes[];
 }
@@ -94,11 +94,14 @@ export interface TokenAttributes {
 
 export interface TokenData {
   boe: boolean; // Bind on equip. Makes the token an NFT (true) or SBT (false)
+  burnAuth: BurnAuth;
+  count: number;
   contract: string; // The contract that this token was minted on - for backwards compatability
   created: number;
   id: string; // eventId
   idHash: string; // hash of eventId
   issuedTo: IssuedTo[]; // both email and wallet addresses live here
+  limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
   restricted: boolean; // Pre-issued tokens = true
