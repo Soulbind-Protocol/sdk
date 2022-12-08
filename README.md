@@ -78,7 +78,7 @@ const address = 'AddressHere';
 
 const { success } = await soulbind.checkClaimAuthAddress(eventId, address);
 console.log(success);
-// Output: true/false
+// Output: true
 ```
 
 ### checkClaimAuthCode
@@ -93,7 +93,7 @@ const code = 'CodeHere';
 
 const { success } = await soulbind.checkClaimAuthCode(eventId, code);
 console.log(success);
-// Output: true/false
+// Output: true
 ```
 
 ### claim
@@ -126,8 +126,8 @@ Get a created SBT event - use when you need the most current data directly from 
 const eventId = 'EventIdHere';
 const optionalTokenId = 'TokenIdHere';
 
-const tokenData = await soulbind.getCreatedToken(eventId, optionalTokenId);
-console.log(tokenData);
+const { success } = await soulbind.getCreatedToken(eventId, optionalTokenId);
+console.log(success);
 // Output: TokenDataResponse
 ```
 
@@ -183,6 +183,7 @@ interface ApiResponse<T> {
   success?: T;
 }
 ```
+
 Reference: [ErrorCode](#errorcode)
 
 ### BurnAuth
@@ -229,6 +230,7 @@ interface IssuedTo {
   tokenId?: number | undefined;
 }
 ```
+
 Reference: [ClaimStatus](#claimstatus)
 
 ### RequestMethod
@@ -253,6 +255,7 @@ interface SbtMetadata {
   attributes: TokenAttributes[];
 }
 ```
+
 Reference: [TokenAttributes](#tokenattributes)
 
 ### TokenAttributes
@@ -283,6 +286,7 @@ interface TokenData {
   txnHash: string; // Hash of the create transaction
 }
 ```
+
 Reference: [BurnAuth](#burnauth), [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata)
 
 ### TokenDataResponse
@@ -294,4 +298,5 @@ interface TokenDataResponse {
   issuedTo?: IssuedTo[];
 }
 ```
+
 Reference: [TokenData](#tokendata), [SbtMetadata](#sbtmetadata), [IssuedTo](#issuedto)
