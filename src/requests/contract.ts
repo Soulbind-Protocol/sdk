@@ -61,7 +61,7 @@ export class Contract extends Base {
   public getCreatedToken(eventId: string, tokenId?: string): Promise<ApiResponse<TokenDataResponse>> {
     return this.request(`${versionPath}/created-token/${eventId}`, {
       method: RequestMethod.post,
-      body: JSON.stringify(tokenId),
+      body: tokenId ? JSON.stringify({ tokenId }) : null,
     });
   }
 

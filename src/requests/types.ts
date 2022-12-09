@@ -68,15 +68,16 @@ export interface IssuedTo {
   to: string; // email address or wallet address
   status: ClaimStatus;
   bound?: boolean; // true or false, only if eventtoken is BOE
+  claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
   code?: string; // secret code - for emails
   tokenId?: number | undefined;
 }
 
 export enum RequestMethod {
-  delete = 'delete',
-  get = 'get',
-  patch = 'patch',
-  post = 'post',
+  delete = 'DELETE',
+  get = 'GET',
+  patch = 'PATCH',
+  post = 'POST',
 }
 
 export interface SbtMetadata {
