@@ -1,6 +1,6 @@
 {
   "name": "@soulbind/sdk",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Soulbind SDK",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
