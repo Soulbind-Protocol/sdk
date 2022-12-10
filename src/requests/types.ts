@@ -22,7 +22,6 @@ export enum ErrorCode {
 
 // Interfaces
 export interface ApiResponse<T> {
-  error?: any,
   errorCode?: ErrorCode,
   success?: T;
 }

@@ -50,7 +50,7 @@ console.log(success);
 
 Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
 
-Burn a token for a given wallet address
+Burn a token for a given wallet address.
 
 ```js
 const receiverAddress = await signer.getAddress();
@@ -66,7 +66,7 @@ console.log(success);
 // Output: true
 ```
 
-### checkClaimAuthAddress
+### validateClaimAuthAddress
 
 Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
 
@@ -76,12 +76,12 @@ Validate if an address has rights to claim a token.
 const eventId = 'EventIdHere';
 const address = 'AddressHere';
 
-const { success } = await soulbind.checkClaimAuthAddress(eventId, address);
+const { success } = await soulbind.validateClaimAuthAddress(eventId, address);
 console.log(success);
 // Output: true
 ```
 
-### checkClaimAuthCode
+### validateClaimAuthCode
 
 Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
 
@@ -91,16 +91,32 @@ Validate if a unique code has rights to claim a token.
 const eventId = 'EventIdHere';
 const code = 'CodeHere';
 
-const { success } = await soulbind.checkClaimAuthCode(eventId, code);
+const { success } = await soulbind.validateClaimAuthCode(eventId, code);
 console.log(success);
 // Output: true
+```
+
+### validateClaimedToken
+
+Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Validate if a unique code has rights to claim a token.
+
+```js
+const eventId = 'EventIdHere';
+const address = 'AddressHere';
+const isTokenBound = true; // optional - use if your event is BOE and you want to validate that a token is soulbound.
+
+const { success } = await soulbind.validateClaimedToken(eventId, address, isTokenBound);
+console.log(success);
+// Output: true/false
 ```
 
 ### claim
 
 Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
 
-Mint SBT to given address
+Mint SBT to given address.
 
 ```js
 const receiverAddress = await signer.getAddress();
@@ -116,11 +132,23 @@ console.log(success);
 Create a token event.
 **NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create)
 
+### getAccountTokens
+
+Returns: Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
+
+Get SBT events that you've created.
+
+```js
+const { success } = await soulbind.getAccountTokens();
+console.log(success);
+// Output: TokenData[]
+```
+
 ### getCreatedToken
 
 Returns: Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
 
-Get a created SBT event - use when you need the most current data directly from chain
+Get a created SBT event - use when you need the most current data directly from chain.
 
 ```js
 const eventId = 'EventIdHere';
@@ -178,7 +206,6 @@ console.log(success);
 
 ```js
 interface ApiResponse<T> {
-  error?: any;
   errorCode?: ErrorCode;
   success?: T;
 }

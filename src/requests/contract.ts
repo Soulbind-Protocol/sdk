@@ -16,10 +16,10 @@ export class Contract extends Base {
 
   /**
   * @param data: CreateRequest data
-  * @returns: {success?: 'txnHashString'; error?: any, errorCode?: ErrorCode}
-  * @dev: Create SBT event
+  * @returns: {success?: 'txnHashString'; errorCode?: ErrorCode}
+  * @dev: Create SBT event.
   */
-  public create(data: CreateRequest): Promise<ApiResponse<string>> {
+  public create(data: CreateRequest): Promise<ApiResponse<TokenData>> {
     return this.request(`${versionPath}/create`, {
       method: RequestMethod.post,
       body: JSON.stringify(data),
@@ -27,27 +27,12 @@ export class Contract extends Base {
   }
 
   // Read
-
   /**
-   * @param eventId: string of eventId.
-   * @param address: a users address.
-   * @returns: {success?: boolean; error?: any, errorCode?: ErrorCode}
-   * @dev: Validate if an address has rights to claim a token.
-   */
-  public checkClaimAuthAddress(eventId: string, address: string): Promise<ApiResponse<boolean>> {
-    return this.request(`${versionPath}/issued/${eventId}/${address}`, {
-      method: RequestMethod.get,
-    });
-  }
-
-  /**
-   * @param eventId: string of eventId.
-   * @param code: unique code - i.e. one associated to an offchain email address 
-   * @returns: {success?: boolean; error?: any, errorCode?: ErrorCode}
-   * @dev: Validate if a unique code has rights to claim a token.
-   */
-  public checkClaimAuthCode(eventId: string, code: string): Promise<ApiResponse<boolean>> {
-    return this.request(`${versionPath}/issued-code/${eventId}/${code}`, {
+  * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
+  * @dev: Get SBT events that you've created.
+  */
+   public getAccountTokens(): Promise<ApiResponse<TokenData[]>> {
+    return this.request(`${versionPath}/tenant/tokens`, {
       method: RequestMethod.get,
     });
   }
@@ -67,11 +52,48 @@ export class Contract extends Base {
 
   /**
   * @param address: a users address.
-  * @returns: {success?: TokenData[]; error?: any, errorCode?: ErrorCode}
+  * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
   * @dev: Get SBTs for an address.
   */
   public getTokens(address: string): Promise<ApiResponse<TokenData[]>> {
     return this.request(`${versionPath}/tokens/${address}`, {
+      method: RequestMethod.get,
+    });
+  }
+
+  /**
+  * @param eventId: string of eventId.
+  * @param address: a users address.
+  * @returns: {success?: boolean; errorCode?: ErrorCode}
+  * @dev: Validate that an address has rights to claim a token.
+  */
+  public validateClaimAuthAddress(eventId: string, address: string): Promise<ApiResponse<boolean>> {
+    return this.request(`${versionPath}/issued/${eventId}/${address}`, {
+      method: RequestMethod.get,
+    });
+  }
+
+  /**
+  * @param eventId: string of eventId.
+  * @param code: unique code - i.e. one associated to an offchain email address 
+  * @returns: {success?: boolean; errorCode?: ErrorCode}
+  * @dev: Validate that a unique code has rights to claim a token.
+  */
+  public validateClaimAuthCode(eventId: string, code: string): Promise<ApiResponse<boolean>> {
+    return this.request(`${versionPath}/issued-code/${eventId}/${code}`, {
+      method: RequestMethod.get,
+    });
+  }
+
+  /**
+  * @param eventId: string of eventId.
+  * @param address: a users address.
+  * @param bound: (optional) require the token to be bound.
+  * @returns: {success?: boolean; errorCode?: ErrorCode}
+  * @dev: Validate that an address has claimed a token.
+  */
+  public validateClaimedToken(eventId: string, address: string, bound?: boolean): Promise<ApiResponse<boolean>> {
+    return this.request(`${versionPath}/claimed/${eventId}/${address}${bound ? '?bound=' + bound : ''}`, {
       method: RequestMethod.get,
     });
   }
@@ -83,7 +105,7 @@ export class Contract extends Base {
   * @param address: address of receiver.
   * @param tokenId: on chain tokenId for a claimed token.
   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
-  * @returns: {success?: boolean; error?: any, errorCode?: ErrorCode}
+  * @returns: {success?: boolean; errorCode?: ErrorCode}
   * @dev: Bind SBT
   */
   public async bind(eventId: string, tokenId: string, address: string, signature: string): Promise<ApiResponse<boolean>> {
@@ -105,7 +127,7 @@ export class Contract extends Base {
   * @param address: address of receiver.
   * @param tokenId: on chain tokenId for a claimed token.
   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
-  * @returns: {success?: boolean; error?: any, errorCode?: ErrorCode}
+  * @returns: {success?: boolean; errorCode?: ErrorCode}
   * @dev: Burn SBT
   */
   public async burn(eventId: string, tokenId: string, address: string, signature: string): Promise<ApiResponse<boolean>> {
@@ -128,7 +150,7 @@ export class Contract extends Base {
    * @param address: address of receiver.
    * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
    * @param uniqueCode: (optional) code for restricted token.
-   * @returns: {success?: 'tokenId'; error?: any, errorCode?: ErrorCode}
+   * @returns: {success?: 'tokenId'; errorCode?: ErrorCode}
    * * @dev: Mint SBT to given address
    */
   public async claim(eventId: string, address: string, signature: string, uniqueCode?: string): Promise<ApiResponse<string>> {
