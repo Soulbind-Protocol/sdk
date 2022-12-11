@@ -70,6 +70,7 @@ export interface IssuedTo {
   claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
   code?: string; // secret code - for emails
   tokenId?: number | undefined;
+  txnHash?: string; // Hash of the transaction that minted the token
 }
 
 export enum RequestMethod {
