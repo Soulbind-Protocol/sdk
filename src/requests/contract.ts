@@ -177,8 +177,6 @@ export class Contract extends Base {
    * END: CRUD
    */
 
-  // TODO(nocs): get all tokens events for owner (or tenant?)
-
 
   /*
   * START: Helper methods

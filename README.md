@@ -48,7 +48,7 @@ console.log(success);
 
 ### burn
 
-Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+burn(eventId, tokenId, address, signature): Promise<[ApiResponse](#apiresponse)<boolean\>>
 
 Burn a token for a given wallet address.
 
@@ -66,55 +66,9 @@ console.log(success);
 // Output: true
 ```
 
-### validateClaimAuthAddress
-
-Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
-
-Validate if an address has rights to claim a token.
-
-```js
-const eventId = 'EventIdHere';
-const address = 'AddressHere';
-
-const { success } = await soulbind.validateClaimAuthAddress(eventId, address);
-console.log(success);
-// Output: true
-```
-
-### validateClaimAuthCode
-
-Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
-
-Validate if a unique code has rights to claim a token.
-
-```js
-const eventId = 'EventIdHere';
-const code = 'CodeHere';
-
-const { success } = await soulbind.validateClaimAuthCode(eventId, code);
-console.log(success);
-// Output: true
-```
-
-### validateClaimedToken
-
-Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
-
-Validate if a unique code has rights to claim a token.
-
-```js
-const eventId = 'EventIdHere';
-const address = 'AddressHere';
-const isTokenBound = true; // optional - use if your event is BOE and you want to validate that a token is soulbound.
-
-const { success } = await soulbind.validateClaimedToken(eventId, address, isTokenBound);
-console.log(success);
-// Output: true/false
-```
-
 ### claim
 
-Returns: Promise<[ApiResponse](#apiresponse)<boolean\>>
+claim(eventId, address, signature, uniqueCode?): Promise<[ApiResponse](#apiresponse)<boolean\>>
 
 Mint SBT to given address.
 
@@ -130,11 +84,12 @@ console.log(success);
 ### create (coming soon)
 
 Create a token event.
+
 **NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create)
 
 ### getAccountTokens
 
-Returns: Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
+getAccountTokens(): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
 
 Get SBT events that you've created.
 
@@ -146,7 +101,7 @@ console.log(success);
 
 ### getCreatedToken
 
-Returns: Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
+ getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
 
 Get a created SBT event - use when you need the most current data directly from chain.
 
@@ -162,6 +117,8 @@ console.log(success);
 ### getSignatureMessage
 
 **NOTE:** _required with most txn_
+
+getSignatureMessage(address): Uint8Array
 
 Construct a formatted message to be signed by user and passed to Soulbind txn methods.
 
@@ -190,7 +147,7 @@ Construct a formatted message to be signed by user and passed to Soulbind txn me
 
 ### getTokens
 
-Returns: Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
+getTokens(address): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
 
 Get all SBTs for an address.
 
@@ -198,6 +155,52 @@ Get all SBTs for an address.
 const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3259aec9b');
 console.log(success);
 // Output: TokenData[]
+```
+
+### validateClaimAuthAddress
+
+validateClaimAuthAddress(eventId, address): Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Validate if an address has rights to claim a token.
+
+```js
+const eventId = 'EventIdHere';
+const address = 'AddressHere';
+
+const { success } = await soulbind.validateClaimAuthAddress(eventId, address);
+console.log(success);
+// Output: true
+```
+
+### validateClaimAuthCode
+
+validateClaimAuthCode(eventId: string, code: string): Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Validate if a unique code has rights to claim a token.
+
+```js
+const eventId = 'EventIdHere';
+const code = 'CodeHere';
+
+const { success } = await soulbind.validateClaimAuthCode(eventId, code);
+console.log(success);
+// Output: true
+```
+
+### validateClaimedToken
+
+validateClaimedToken(eventId, address, bound?): Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Validate if a unique code has rights to claim a token.
+
+```js
+const eventId = 'EventIdHere';
+const address = 'AddressHere';
+const isTokenBound = true; // optional - use if your event is BOE and you want to validate that a token is soulbound.
+
+const { success } = await soulbind.validateClaimedToken(eventId, address, isTokenBound);
+console.log(success);
+// Output: true/false
 ```
 
 ## Models
