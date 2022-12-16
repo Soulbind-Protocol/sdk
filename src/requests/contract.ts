@@ -53,11 +53,12 @@ export class Contract extends Base {
   /**
   * @param address: a users address.
   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @param tenantId: (optional) tenant ID to query as authorizedAccount. If using sdk, you most likely are looking for getAccountTokens().
   * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
   * @dev: Get created SBT events for a specific address.
   */
-  public getCreatedTokens(address: string, signature: string): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/created-tokens/${address}/${signature}`, {
+  public getCreatedTokens(address: string, signature: string, tenantId?: string): Promise<ApiResponse<TokenData[]>> {
+    return this.request(`${versionPath}/created-tokens/${address}/${signature}${tenantId ? '?tenantId=' + tenantId : '' }`, {
       method: RequestMethod.get,
     });
   }
