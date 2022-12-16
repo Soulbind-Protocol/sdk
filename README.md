@@ -91,7 +91,7 @@ Create a token event.
 
 getAccountTokens(): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
 
-Get SBT events that you've created.
+Get created SBT events that your organization has created.
 
 ```js
 const { success } = await soulbind.getAccountTokens();
@@ -101,9 +101,9 @@ console.log(success);
 
 ### getCreatedToken
 
- getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
+getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
 
-Get a created SBT event - use when you need the most current data directly from chain.
+Get a created SBT event - use when you need the most current data for a single event directly from chain.
 
 ```js
 const eventId = 'EventIdHere';
@@ -112,6 +112,21 @@ const optionalTokenId = 'TokenIdHere';
 const { success } = await soulbind.getCreatedToken(eventId, optionalTokenId);
 console.log(success);
 // Output: TokenDataResponse
+```
+
+### getCreatedTokens
+
+getCreatedTokens(address, signature): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
+
+Get created SBT events for a specific address.
+
+```js
+const creatorsAddress = await signer.getAddress();
+const creatorsSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
+
+const { success } = await soulbind.getCreatedTokens(creatorsAddress, creatorsSignature);
+console.log(success);
+// Output: TokenData[]
 ```
 
 ### getSignatureMessage
@@ -126,16 +141,9 @@ Construct a formatted message to be signed by user and passed to Soulbind txn me
   // Specific signature message used below
   const signatureMessage = soulbind.getSignatureMessage(address);
 
-  // This example uses ethers.js and Infura to get a signer - use w/e method you currently have to get a signer.
-  const provider = new ethers.providers.InfuraProvider(
-    process.env.EVM_NETWORK,
-    process.env.INFURA_API_KEY
-  );
-  const signer = new ethers.Wallet(
-    {
-    address: process.env.SIGNER_ADDRESS as string,
-    privateKey: process.env.SIGNER_KEY as string
-    }, provider);
+  // This example uses ethers.js to get a signer - use w/e method you currently have to get a signer.
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
   const address = await signer.getAddress();
 
   // Using your signer, get the user to sign the signatureMessage from above.

@@ -29,9 +29,9 @@ export class Contract extends Base {
   // Read
   /**
   * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
-  * @dev: Get SBT events that you've created.
+  * @dev: Get created SBT events that your organization has created.
   */
-   public getAccountTokens(): Promise<ApiResponse<TokenData[]>> {
+  public getAccountTokens(): Promise<ApiResponse<TokenData[]>> {
     return this.request(`${versionPath}/tenant/tokens`, {
       method: RequestMethod.get,
     });
@@ -41,12 +41,24 @@ export class Contract extends Base {
   * @param eventId: string of eventId.
   * @param tokenId: (optional) on chain tokenId for a claimed token. issuedTo array will be populated if tokenId is found.
   * @returns: {eventData, metaData, issuedTo?}
-  * @dev: Get a created SBT event - use when you need the most current data directly from chain.
+  * @dev: Get a created SBT event - use when you need the most current data for a single event directly from chain.
   */
   public getCreatedToken(eventId: string, tokenId?: string): Promise<ApiResponse<TokenDataResponse>> {
     return this.request(`${versionPath}/created-token/${eventId}`, {
       method: RequestMethod.post,
       body: tokenId ? JSON.stringify({ tokenId }) : null,
+    });
+  }
+
+  /**
+  * @param address: a users address.
+  * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
+  * @dev: Get created SBT events for a specific address.
+  */
+  public getCreatedTokens(address: string, signature: string): Promise<ApiResponse<TokenData[]>> {
+    return this.request(`${versionPath}/created-tokens/${address}/${signature}`, {
+      method: RequestMethod.get,
     });
   }
 
