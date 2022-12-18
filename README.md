@@ -155,9 +155,9 @@ Construct a formatted message to be signed by user and passed to Soulbind txn me
 
 ### getTokens
 
-getTokens(address): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
+getTokens(address, filter?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
 
-Get all SBTs for an address.
+Get all SBTs for an address. If `filter = true`, only tokens for your organization will be returned.
 
 ```js
 const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3259aec9b');

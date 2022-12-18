@@ -65,11 +65,12 @@ export class Contract extends Base {
 
   /**
   * @param address: a users address.
+  * @param filter: set as true to return tokens for your organization only.
   * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
   * @dev: Get SBTs for an address.
   */
-  public getTokens(address: string): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/tokens/${address}`, {
+  public getTokens(address: string, filter?: boolean): Promise<ApiResponse<TokenData[]>> {
+    return this.request(`${versionPath}/tokens/${address}${filter ? '?filter=' + filter : '' }`, {
       method: RequestMethod.get,
     });
   }
