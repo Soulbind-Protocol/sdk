@@ -133,12 +133,13 @@ console.log(success);
 
 **NOTE:** _required with most txn_
 
-getSignatureMessage(address): Uint8Array
+getSignatureMessage(address, preventArrayify?): Uint8Array | string
 
 Construct a formatted message to be signed by user and passed to Soulbind txn methods.
 
 ```js
   // Specific signature message used below
+  // NOTE: If you provider does not need an Uint8Array message, use soulbind.getSignatureMessage(address, true)
   const signatureMessage = soulbind.getSignatureMessage(address);
 
   // This example uses ethers.js to get a signer - use w/e method you currently have to get a signer.

@@ -160,13 +160,13 @@ export class Contract extends Base {
 
 
   /**
-   * @param eventId: string of eventId.
-   * @param address: address of receiver.
-   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
-   * @param uniqueCode: (optional) code for restricted token.
-   * @returns: {success?: 'tokenId'; errorCode?: ErrorCode}
-   * * @dev: Mint SBT to given address
-   */
+  * @param eventId: string of eventId.
+  * @param address: address of receiver.
+  * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @param uniqueCode: (optional) code for restricted token.
+  * @returns: {success?: 'tokenId'; errorCode?: ErrorCode}
+  * * @dev: Mint SBT to given address
+  */
   public async claim(eventId: string, address: string, signature: string, uniqueCode?: string): Promise<ApiResponse<string>> {
     const claimRequest: ClaimRequest = {
       signature,
@@ -195,11 +195,22 @@ export class Contract extends Base {
   /*
   * START: Helper methods
   */
-  public getSignatureMessage(address: string): Uint8Array {
+
+  /**
+  * 
+  * @param address: address of signer.
+  * @param preventArrayify: (optional) Set this to true if you are seeing any UTF-8 errors - some providers convert to Uint8Array for you.
+  * @returns: Message ready to be signed by user.
+  */
+  public getSignatureMessage(address: string, preventArrayify?: boolean): Uint8Array | string {
     let messageHash = ethers.utils.solidityKeccak256(
       ["address"],
       [address]
     );
+
+    if (preventArrayify) {
+      return messageHash;
+    }
 
     return ethers.utils.arrayify(messageHash);
   }
