@@ -1,4 +1,7 @@
+import { ConnectExtension } from '@magic-ext/connect';
 import fetch from 'isomorphic-unfetch';
+import { Magic } from 'magic-sdk';
+import { RequestMethod } from './requests/types';
 
 type Config = {
   apiKey: string;
@@ -29,6 +32,34 @@ export abstract class Base {
     return fetch(url, config).then((response) => {
       if (response.ok) {
         return response.json();
+      }
+      throw new Error(response.statusText);
+    });
+  }
+
+  protected async startupMagic() {
+    const url = `${this.baseUrl}/v1/contract/network`;
+
+    const options = {
+      method: RequestMethod.get
+    }
+    const headers = {
+      'Content-Type': 'application/json',
+      'soulbind-api-key': this.apiKey,
+    };
+    const config = {
+      ...options,
+      headers,
+    };
+
+    return fetch(url, config).then(async (response) => {
+      if (response.ok) {
+        const apiResponse = await response.json();
+
+        return new Magic(apiResponse.success.magicKey, {
+          extensions: [new ConnectExtension()],
+          network: apiResponse.success.network,
+        });
       }
       throw new Error(response.statusText);
     });

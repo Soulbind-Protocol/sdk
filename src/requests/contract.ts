@@ -7,7 +7,6 @@ const basePath = 'contract';
 const versionPath = `/v1/${basePath}`
 
 export class Contract extends Base {
-
   /**
    * CRUD
    */
@@ -58,7 +57,7 @@ export class Contract extends Base {
   * @dev: Get created SBT events for a specific address.
   */
   public getCreatedTokens(address: string, signature: string, tenantId?: string): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/created-tokens/${address}/${signature}${tenantId ? '?tenantId=' + tenantId : '' }`, {
+    return this.request(`${versionPath}/created-tokens/${address}/${signature}${tenantId ? '?tenantId=' + tenantId : ''}`, {
       method: RequestMethod.get,
     });
   }
@@ -70,7 +69,7 @@ export class Contract extends Base {
   * @dev: Get SBTs for an address.
   */
   public getTokens(address: string, filter?: boolean): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/tokens/${address}${filter ? '?filter=' + filter : '' }`, {
+    return this.request(`${versionPath}/tokens/${address}${filter ? '?filter=' + filter : ''}`, {
       method: RequestMethod.get,
     });
   }

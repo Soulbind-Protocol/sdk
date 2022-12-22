@@ -1,6 +1,6 @@
 {
   "name": "@soulbind/sdk",
-  "version": "0.1.13",
+  "version": "0.2.0",
   "description": "Soulbind SDK",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
@@ -28,9 +28,11 @@
     "microbundle": "0.15.0"
   },
   "dependencies": {
+    "@magic-ext/connect": "^4.0.0",
     "ethers": "^5.7.2",
     "i": "^0.3.7",
     "isomorphic-unfetch": "^3.1.0",
+    "magic-sdk": "^11.0.0",
     "npm": "^9.2.0"
   },
   "files": [
