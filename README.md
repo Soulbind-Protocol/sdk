@@ -47,7 +47,7 @@ console.log(success);
 # Methods
 
   - [Email](#email) - seamlessly onboard users via email.
-    - [Connecting](#emailconnect)
+    - [Connect](#emailconnect)
     - [Disconnect](#emaildisconnect)
     - [Get Signature](#getemailsignature)
     - [Get Address](#getemailwalletaddress)
