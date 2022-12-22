@@ -46,12 +46,12 @@ console.log(success);
 
 # Methods
 
-  - [Email](#email)
+  - [Email](#email) - seamlessly onboard users via email.
     - [Connecting](#emailconnect)
     - [Disconnect](#emaildisconnect)
     - [Get Signature](#getemailsignature)
     - [Get Address](#getemailwalletaddress)
-  - [Core](#core)
+  - [Core](#core) - core methods for your soulbound tokens.
     - [Burn](#burn)
     - [Claim](#claim)
     - [Create](#create)
