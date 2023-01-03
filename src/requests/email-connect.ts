@@ -5,7 +5,6 @@ import { Contract } from "./contract";
 export class EmailConnect extends Contract {
 
   private emailWalletAddress: string | undefined;
-  private emailSignature: string | undefined;
   private emailProvider: ethers.providers.Web3Provider;
   private emailSigner: ethers.providers.JsonRpcSigner | undefined;
   private magic: any;
@@ -39,7 +38,6 @@ export class EmailConnect extends Contract {
     }
 
     this.emailWalletAddress = undefined;
-    this.emailSignature = undefined;
 
     return await this.magic.connect.disconnect();
   }
@@ -48,22 +46,12 @@ export class EmailConnect extends Contract {
   * @returns: string
   * @dev: Gets a signature hash that can be passed to Soulbind txn methods
   */
-  public async getEmailSignature(): Promise<string> {
+  public async getEmailSignature(message: string): Promise<string> {
     if (!this.emailSigner) {
       return;
     }
 
-    if (this.emailSignature && this.emailWalletAddress) {
-      // Verify sig
-      const signedAddress = ethers.utils.verifyMessage(this.getSignatureMessage(this.emailWalletAddress), this.emailSignature);
-      if (signedAddress === this.emailWalletAddress) {
-        return this.emailSignature;
-      }
-    }
-
-    this.emailSignature = await this.emailSigner.signMessage(this.getSignatureMessage(this.emailWalletAddress, true));
-
-    return this.emailSignature;
+    return await this.emailSigner.signMessage(message);
   }
 
   /**

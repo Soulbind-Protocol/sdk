@@ -44,25 +44,57 @@ console.log(success);
 // Output: TokenData[]
 ```
 
-# Methods
+# Table of Contents
 
-  - [Email](#email) - seamlessly onboard users via email.
-    - [Connect](#emailconnect)
-    - [Disconnect](#emaildisconnect)
-    - [Get Signature](#getemailsignature)
-    - [Get Address](#getemailwalletaddress)
-  - [Core](#core) - core methods for your soulbound tokens.
-    - [Burn](#burn)
-    - [Claim](#claim)
-    - [Create](#create)
-    - [Get Created Account Tokens](#getaccounttokens)
-    - [Get Created Token](#getcreatedtoken)
-    - [Get Created Tokens](#getcreatedtokens)
-    - [Get Signature Message](#getsignaturemessage)
-    - [Get User Tokens](#gettokens)
-    - [Validate Address Claim Authorization](#validateclaimauthaddress)
-    - [Validate Code Claim Authorization](#validateclaimauthcode)
-    - [Validate Claimed Token](#validateclaimedtoken)
+- [Features](#features)
+  - [Bind on Equip (BoE)](#bind-on-equip-boe)
+  - [Burn Auth](#burn-authorization)
+  - [Restricted](#restricted)
+  - [Updatable](#updatable)
+- [Email](#email) - seamlessly onboard users via email.
+  - [Connect](#emailconnect)
+  - [Disconnect](#emaildisconnect)
+  - [Get Signature](#getemailsignature)
+  - [Get Address](#getemailwalletaddress)
+- [Core](#core) - core methods for your soulbound tokens.
+  - [Burn](#burn)
+  - [Claim](#claim)
+  - [Create](#create)
+  - [Get Created Account Tokens](#getaccounttokens)
+  - [Get Created Account Tokens Filtered](#getaccounttokensfiltered)
+  - [Get Created Token](#getcreatedtoken)
+  - [Get Signature Message](#getsignaturemessage)
+  - [Get User Tokens](#gettokens)
+  - [Update](#update)
+  - [Validate Address Claim Authorization](#validateclaimauthaddress)
+  - [Validate Code Claim Authorization](#validateclaimauthcode)
+  - [Validate Claimed Token](#validateclaimedtoken)
+
+# Features
+
+## Bind on Equip (BoE)
+
+Toggling this on will allow a token to be transferred until bound. After a user claims this token, they will have the ability to transfer this token at will. Users who own this token can choose to "[Soulbind](#bind)" it, preventing it from being transferred further.
+
+Data on who has bound (or not bound) a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
+
+## Burn Authorization
+
+This allows you to set a token Burn Auth. Or in other words, after a token has been claimed, this will determine who has the right to burn/delete that token.
+
+Options: Issuer (you), Claimer, Both, Neither.
+
+## Restricted
+
+Toggling this on allows you to pre-issue tokens to wallet AND/OR email addresses.
+
+Data on who has claimed a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
+
+## Updatable
+
+Creating a token with updatable functionality allows you to [update](#update) an individual token's metadata at a later date. Once a token has been claimed, you can update that token to reflect new data at any time.
+
+# Methods
 
 ## Email
 
@@ -118,21 +150,45 @@ console.log(address);
 
 These are the core methods for your soulbound tokens.
 
-### burn
+### bind
 
-burn(eventId, tokenId, address, signature): Promise<[ApiResponse](#apiresponse)<boolean\>>
+bind(eventId, tokenId, address, signature, message): Promise<[ApiResponse](#apiresponse)<boolean\>>
 
-Burn a token for a given wallet address.
+Bind SBT. Only useable on BoE tokens.
 
 ```js
 const receiverAddress = await signer.getAddress();
-const receiverSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
+const message = soulbind.getSignatureMessage(address);
+const receiverSignature = await signer.signMessage(message);
 
 const { success } = await soulbind.burn(
   'EventIdHere',
   'TokenIdHere',
   receiverAddress,
-  receiverSignature
+  receiverSignature,
+  message
+);
+console.log(success);
+// Output: true
+```
+
+### burn
+
+burn(eventId, tokenId, address, signature, message): Promise<[ApiResponse](#apiresponse)<boolean\>>
+
+Burn a token for a given wallet address.
+
+```js
+const receiverAddress = await signer.getAddress();
+const message = soulbind.getSignatureMessage(address);
+const receiverSignature = await signer.signMessage(message);
+
+const { success } = await soulbind.burn(
+  'EventIdHere',
+  'TokenIdHere',
+  receiverAddress,
+  receiverSignature,
+  message
 );
 console.log(success);
 // Output: true
@@ -140,15 +196,21 @@ console.log(success);
 
 ### claim
 
-claim(eventId, address, signature, uniqueCode?): Promise<[ApiResponse](#apiresponse)<boolean\>>
+claim(eventId, address, signature, message, uniqueCode?): Promise<[ApiResponse](#apiresponse)<boolean\>>
 
 Mint SBT to given address.
 
 ```js
 const receiverAddress = await signer.getAddress();
-const receiverSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
+const message = soulbind.getSignatureMessage(address);
+const receiverSignature = await signer.signMessage(message);
 
-const { success } = await soulbind.claim('EventIdHere', receiverAddress, receiverSignature);
+const { success } = await soulbind.claim(
+  'EventIdHere',
+  receiverAddress,
+  receiverSignature,
+  message
+);
 console.log(success);
 // Output: tokenId
 ```
@@ -163,7 +225,7 @@ console.log(success);
 
 getAccountTokens(): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
 
-Get created SBT events that your organization has created.
+Get SBT events that your organization has created.
 
 ```js
 const { success } = await soulbind.getAccountTokens();
@@ -171,9 +233,26 @@ console.log(success);
 // Output: TokenData[]
 ```
 
+### getAccountTokensFiltered
+
+**NOTE:** Used for specific account token queries or multi-tennant accounts. Most accounts use: [getAccountTokens()](#getaccounttokens)
+
+getAccountTokensFiltered(address, signature, message): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
+
+Get SBT events that your address or other tenant that you are authorized to use has created.
+
+```js
+const creatorsAddress = await signer.getAddress();
+const creatorsSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
+
+const { success } = await soulbind.getAccountTokensFiltered(creatorsAddress, creatorsSignature);
+console.log(success);
+// Output: TokenData[]
+```
+
 ### getCreatedToken
 
-getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenDataResponse](#tokendataresponse)>>
+getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
 
 Get a created SBT event - use when you need the most current data for a single event directly from chain.
 
@@ -183,22 +262,7 @@ const optionalTokenId = 'TokenIdHere';
 
 const { success } = await soulbind.getCreatedToken(eventId, optionalTokenId);
 console.log(success);
-// Output: TokenDataResponse
-```
-
-### getCreatedTokens
-
-getCreatedTokens(address, signature): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
-
-Get created SBT events for a specific address.
-
-```js
-const creatorsAddress = await signer.getAddress();
-const creatorsSignature = await signer.signMessage(soulbind.getSignatureMessage(address));
-
-const { success } = await soulbind.getCreatedTokens(creatorsAddress, creatorsSignature);
-console.log(success);
-// Output: TokenData[]
+// Output: TokenData
 ```
 
 ### getSignatureMessage
@@ -237,6 +301,37 @@ const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3
 console.log(success);
 // Output: TokenData[]
 ```
+
+### update
+
+<!-- update(tokenId, eventId, metadata, address, signature, message): Promise<[ApiResponse](#apiresponse)<boolean\>> -->
+
+(coming soon) Update a token.
+
+<!-- TODO(nocs): update this with an individual token get - based on tokenId -->
+
+<!-- ```js
+const tokenId = 'TokenIdHere';
+const eventId = 'EventIdHere';
+const issuersAddress = await signer.getAddress();
+const message = soulbind.getSignatureMessage(address);
+const IssuersSignature = await signer.signMessage(message);
+
+const newMetadata = {
+  name: 'Awesome blossom'
+  description: 'This token represents your level.'
+  attributes: [
+    {
+      "trait_type": "Level",
+      "value": "2"
+    },
+  ]
+}
+
+const { success } = await soulbind.update(tokenId, eventId, issuersAddress, IssuersSignature, message);
+console.log(success);
+// Output: true
+``` -->
 
 ### validateClaimAuthAddress
 
@@ -401,15 +496,3 @@ interface TokenData {
 ```
 
 Reference: [BurnAuth](#burnauth), [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata)
-
-### TokenDataResponse
-
-```js
-interface TokenDataResponse {
-  eventData: TokenData;
-  metaData: SbtMetadata;
-  issuedTo?: IssuedTo[];
-}
-```
-
-Reference: [TokenData](#tokendata), [SbtMetadata](#sbtmetadata), [IssuedTo](#issuedto)

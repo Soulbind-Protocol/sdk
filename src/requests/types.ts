@@ -29,6 +29,7 @@ export interface ApiResponse<T> {
 export interface BindRequest {
   address: string;
   eventId: string;
+  message: string;
   signature: string;
   tokenId: string;
 }
@@ -36,6 +37,7 @@ export interface BindRequest {
 export interface BurnRequest {
   address: string;
   eventId: string;
+  message: string;
   signature: string;
   tokenId: string;
 }
@@ -44,6 +46,7 @@ export interface ClaimRequest {
   address: string;
   id: string;
   signature: string
+  message: string;
   uniqueCode?: string;
 }
 
@@ -107,10 +110,4 @@ export interface TokenData {
   owner: string; // issuer wallet address
   restricted: boolean; // Pre-issued tokens = true
   txnHash: string; // Hash of the create transaction
-}
-
-export interface TokenDataResponse {
-  eventData: TokenData,
-  metaData: SbtMetadata,
-  issuedTo?: IssuedTo[],
 }

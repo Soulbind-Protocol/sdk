@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
-import { Base } from "../base";
-import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, RequestMethod, TokenData, TokenDataResponse } from "./types";
+import { Base } from '../base';
+import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, RequestMethod, TokenData } from './types';
 
 const basePath = 'contract';
 const versionPath = `/v1/${basePath}`
@@ -37,28 +37,29 @@ export class Contract extends Base {
   }
 
   /**
-  * @param eventId: string of eventId.
-  * @param tokenId: (optional) on chain tokenId for a claimed token. issuedTo array will be populated if tokenId is found.
-  * @returns: {eventData, metaData, issuedTo?}
-  * @dev: Get a created SBT event - use when you need the most current data for a single event directly from chain.
+  * @param address: an account admin address.
+  * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @param message: message string returned from getSignatureMessage.
+  * @param tenantId: (optional) tenant ID to query as authorizedAccount. If using sdk, you most likely are looking for getAccountTokens().
+  * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
+  * @dev: Get created SBT events that your address or other tenant has created.
   */
-  public getCreatedToken(eventId: string, tokenId?: string): Promise<ApiResponse<TokenDataResponse>> {
-    return this.request(`${versionPath}/created-token/${eventId}`, {
-      method: RequestMethod.post,
-      body: tokenId ? JSON.stringify({ tokenId }) : null,
+  public getAccountTokensFiltered(address: string, signature: string, message: string, tenantId?: string): Promise<ApiResponse<TokenData[]>> {
+    return this.request(`${versionPath}/created-tokens/${address}/${signature}?message=${message}${tenantId ? '&tenantId=' + tenantId : ''}`, {
+      method: RequestMethod.get,
     });
   }
 
   /**
-  * @param address: a users address.
-  * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
-  * @param tenantId: (optional) tenant ID to query as authorizedAccount. If using sdk, you most likely are looking for getAccountTokens().
-  * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
-  * @dev: Get created SBT events for a specific address.
+  * @param eventId: string of eventId.
+  * @param tokenId: (optional) on chain tokenId for a claimed token. issuedTo array will be populated if tokenId is found.
+  * @returns: {success?: TokenData; errorCode?: ErrorCode}
+  * @dev: Get a created SBT event - use when you need the most current data for a single event directly from chain.
   */
-  public getCreatedTokens(address: string, signature: string, tenantId?: string): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/created-tokens/${address}/${signature}${tenantId ? '?tenantId=' + tenantId : ''}`, {
-      method: RequestMethod.get,
+  public getCreatedToken(eventId: string, tokenId?: string): Promise<ApiResponse<TokenData>> {
+    return this.request(`${versionPath}/created-token/${eventId}`, {
+      method: RequestMethod.post,
+      body: tokenId ? JSON.stringify({ tokenId }) : null,
     });
   }
 
@@ -118,15 +119,17 @@ export class Contract extends Base {
   * @param address: address of receiver.
   * @param tokenId: on chain tokenId for a claimed token.
   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @param message: message string returned from getSignatureMessage.
   * @returns: {success?: boolean; errorCode?: ErrorCode}
   * @dev: Bind SBT
   */
-  public async bind(eventId: string, tokenId: string, address: string, signature: string): Promise<ApiResponse<boolean>> {
+  public async bind(eventId: string, tokenId: string, address: string, signature: string, message: string): Promise<ApiResponse<boolean>> {
     const burnRequest: BindRequest = {
       address,
       eventId,
       tokenId,
       signature,
+      message,
     }
 
     return this.request(`${versionPath}/bind`, {
@@ -140,15 +143,17 @@ export class Contract extends Base {
   * @param address: address of receiver.
   * @param tokenId: on chain tokenId for a claimed token.
   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @param message: message string returned from getSignatureMessage.
   * @returns: {success?: boolean; errorCode?: ErrorCode}
   * @dev: Burn SBT
   */
-  public async burn(eventId: string, tokenId: string, address: string, signature: string): Promise<ApiResponse<boolean>> {
+  public async burn(eventId: string, tokenId: string, address: string, signature: string, message: string): Promise<ApiResponse<boolean>> {
     const burnRequest: BurnRequest = {
       address,
       eventId,
       tokenId,
       signature,
+      message,
     }
 
     return this.request(`${versionPath}/burn`, {
@@ -162,15 +167,17 @@ export class Contract extends Base {
   * @param eventId: string of eventId.
   * @param address: address of receiver.
   * @param signature: signed message using getSignatureMessage. Address of signer must match address property.
+  * @param message: message string returned from getSignatureMessage.
   * @param uniqueCode: (optional) code for restricted token.
   * @returns: {success?: 'tokenId'; errorCode?: ErrorCode}
   * * @dev: Mint SBT to given address
   */
-  public async claim(eventId: string, address: string, signature: string, uniqueCode?: string): Promise<ApiResponse<string>> {
+  public async claim(eventId: string, address: string, signature: string, message: string, uniqueCode?: string): Promise<ApiResponse<string>> {
     const claimRequest: ClaimRequest = {
       signature,
       id: eventId,
       address,
+      message,
     }
 
     if (uniqueCode) {
@@ -198,20 +205,12 @@ export class Contract extends Base {
   /**
   * 
   * @param address: address of signer.
-  * @param preventArrayify: (optional) Set this to true if you are seeing any UTF-8 errors - some providers convert to Uint8Array for you.
   * @returns: Message ready to be signed by user.
   */
-  public getSignatureMessage(address: string, preventArrayify?: boolean): Uint8Array | string {
-    let messageHash = ethers.utils.solidityKeccak256(
-      ["address"],
-      [address]
-    );
-
-    if (preventArrayify) {
-      return messageHash;
-    }
-
-    return ethers.utils.arrayify(messageHash);
+  public getSignatureMessage(address: string): string {
+    const randomValues = Buffer.from(crypto.getRandomValues(new Uint32Array(8))).toString('base64');
+    const rawMessage = `Signing confirms that you own this address:\n${address}\n~~Security~~\nTimestamp: ${Date.now()}\nNonce: ${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(randomValues))}`;
+    return `${rawMessage}\nHash: ${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rawMessage))}`;
   }
 
   /*
