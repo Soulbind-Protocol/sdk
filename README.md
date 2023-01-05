@@ -469,7 +469,7 @@ Reference: [TokenAttributes](#tokenattributes)
 ```js
 interface TokenAttributes {
   trait_type: string;
-  value: string;
+  value: string | number;
 }
 ```
 

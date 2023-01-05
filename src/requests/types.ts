@@ -93,7 +93,7 @@ export interface SbtMetadata {
 
 export interface TokenAttributes {
   trait_type: string;
-  value: string;
+  value: string | number;
 }
 
 export interface TokenData {
