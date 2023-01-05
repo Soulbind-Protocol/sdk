@@ -75,7 +75,6 @@ console.log(success);
   - [ClaimStatus](#claimstatus)
   - [ErrorCode](#errorcode)
   - [IssuedTo](#issuedto)
-  - [RequestMethod](#requestmethod)
   - [SbtMetadata](#sbtmetadata)
   - [TokenAttributes](#tokenattributes)
   - [TokenData](#tokendata) - main object.
@@ -450,17 +449,6 @@ interface IssuedTo {
 ```
 
 Reference: [ClaimStatus](#claimstatus)
-
-### RequestMethod
-
-```js
-enum RequestMethod {
-  delete = 'delete',
-  get = 'get',
-  patch = 'patch',
-  post = 'post',
-}
-```
 
 ### SbtMetadata
 
