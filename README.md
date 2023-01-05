@@ -69,6 +69,16 @@ console.log(success);
   - [Validate Address Claim Authorization](#validateclaimauthaddress)
   - [Validate Code Claim Authorization](#validateclaimauthcode)
   - [Validate Claimed Token](#validateclaimedtoken)
+- [Data Structures](#models)
+  - [ApiResponse](#apiresponse) - generic response from all calls.
+  - [BurnAuth](#burnauth)
+  - [ClaimStatus](#claimstatus)
+  - [ErrorCode](#errorcode)
+  - [IssuedTo](#issuedto)
+  - [RequestMethod](#requestmethod)
+  - [SbtMetadata](#sbtmetadata)
+  - [TokenAttributes](#tokenattributes)
+  - [TokenData](#tokendata) - main object.
 
 # Features
 
@@ -458,7 +468,7 @@ enum RequestMethod {
 interface SbtMetadata {
   description: string;
   external_url: string;
-  image: string; // IPFS URI or Back Image data
+  image: string; // IPFS URI or Backend Image data
   name: string;
   attributes: TokenAttributes[];
 }
