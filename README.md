@@ -24,12 +24,6 @@ npm i @soulbind/sdk
 import Soulbind from '@soulbind/sdk';
 ```
 
-### Require
-
-```js
-const Soulbind = require('@soulbind/sdk');
-```
-
 ### Invoke
 
 ```js
