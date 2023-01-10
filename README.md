@@ -51,6 +51,7 @@ console.log(success);
   - [Get Signature](#getemailsignature)
   - [Get Address](#getemailwalletaddress)
 - [Core](#core) - core methods for your soulbound tokens.
+  - [Bind](#bind)
   - [Burn](#burn)
   - [Claim](#claim)
   - [Create](#create)
@@ -110,7 +111,7 @@ emailConnect(): string
 Connects (or re-connects) a user via email address. For first-time connection, a UI will be displayed that walks the user through the process. Subsequent attempts to this call will re-connect the user without the UI process.
 
 ```js
-const address = await this.soulbind.emailConnect();
+const address = await soulbind.emailConnect();
 console.log(address);
 // Output: 0xab5801a7d398351b8be11c439e05c5b3259aec9b
 ```
@@ -122,7 +123,7 @@ emailDisconnect(): string
 Disconnects an email user.
 
 ```js
-await this.soulbind.emailDisconnect();
+await soulbind.emailDisconnect();
 ```
 
 ### getEmailSignature
@@ -132,7 +133,7 @@ getEmailSignature(): Promise<string\>
 Gets a signature hash that can be passed to Soulbind txn methods. i.e. [claim](#claim)
 
 ```js
-const signature = await this.soulbind.getEmailSignature();
+const signature = await soulbind.getEmailSignature();
 console.log(signature);
 // Output: EVM signature for the connected address.
 ```
@@ -144,7 +145,7 @@ getEmailWalletAddress(): string
 Returns the currently connected email wallet address.
 
 ```js
-const address = this.soulbind.getEmailWalletAddress();
+const address = soulbind.getEmailWalletAddress();
 console.log(address);
 // Output: 0xab5801a7d398351b8be11c439e05c5b3259aec9b
 ```
@@ -164,7 +165,7 @@ const receiverAddress = await signer.getAddress();
 const message = soulbind.getSignatureMessage(address);
 const receiverSignature = await signer.signMessage(message);
 
-const { success } = await soulbind.burn(
+const { success } = await soulbind.bind(
   'EventIdHere',
   'TokenIdHere',
   receiverAddress,

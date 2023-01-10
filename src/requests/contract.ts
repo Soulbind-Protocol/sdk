@@ -125,7 +125,7 @@ export class Contract extends Base {
   * @dev: Bind SBT
   */
   public async bind(eventId: string, tokenId: string, address: string, signature: string, message: string): Promise<ApiResponse<boolean>> {
-    const burnRequest: BindRequest = {
+    const bindRequest: BindRequest = {
       address,
       eventId,
       tokenId,
@@ -135,7 +135,7 @@ export class Contract extends Base {
 
     return this.request(`${versionPath}/bind`, {
       method: RequestMethod.patch,
-      body: JSON.stringify(burnRequest),
+      body: JSON.stringify(bindRequest),
     });
   }
 
