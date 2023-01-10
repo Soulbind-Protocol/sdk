@@ -238,7 +238,7 @@ console.log(success);
 
 ### getAccountTokensFiltered
 
-**NOTE:** Used for specific account token queries or multi-tennant accounts. Most accounts use: [getAccountTokens()](#getaccounttokens)
+**NOTE:** Used for specific account token queries or multi-tennant accounts. For a simpler query, use: [getAccountTokens()](#getaccounttokens)
 
 getAccountTokensFiltered(address, signature, message): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
 
@@ -257,7 +257,8 @@ console.log(success);
 
 getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
 
-Get a created SBT event - use when you need the most current data for a single event directly from chain.
+Get a created SBT event - use when you need the most current data for a single event directly from chain. 
+Pass in tokenId to populate the issuedTo property.
 
 ```js
 const eventId = 'EventIdHere';

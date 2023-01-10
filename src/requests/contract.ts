@@ -1,3 +1,4 @@
+import CryptoES from 'crypto-es';
 import { ethers } from 'ethers';
 
 import { Base } from '../base';
@@ -208,7 +209,7 @@ export class Contract extends Base {
   * @returns: Message ready to be signed by user.
   */
   public getSignatureMessage(address: string): string {
-    const randomValues = Buffer.from(crypto.getRandomValues(new Uint32Array(8))).toString('base64');
+    const randomValues = CryptoES.SHA256(CryptoES.lib.WordArray.random(128/8)).toString(CryptoES.enc.Base64);
     const rawMessage = `Signing confirms that you own this address:\n${address}\n~~Security~~\nTimestamp: ${Date.now()}\nNonce: ${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(randomValues))}`;
     return `${rawMessage}\nHash: ${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rawMessage))}`;
   }
