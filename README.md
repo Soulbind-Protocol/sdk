@@ -62,7 +62,7 @@ console.log(success);
   - [Get Created Account Tokens Filtered](#getaccounttokensfiltered)
   - [Get Created Token](#getcreatedtoken)
   - [Get Signature Message](#getsignaturemessage)
-  - [Get User Tokens](#gettokens)
+  - [Get Tokens](#gettokens) - get all SBTs for a given address
   - [Update](#update)
   - [Validate Address Claim Authorization](#validateclaimauthaddress)
   - [Validate Code Claim Authorization](#validateclaimauthcode)
@@ -261,8 +261,8 @@ console.log(success);
 
 getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
 
-Get a created SBT event - use when you need the most current data for a single event directly from chain. 
-Pass in tokenId to populate the issuedTo property.
+Get a created SBT - use when you need the most current TokenData directly from chain. 
+Pass in tokenId to populate the issuedTo property with who owns that particular tokenId.
 
 ```js
 const eventId = 'EventIdHere';
@@ -439,7 +439,7 @@ enum ErrorCode {
 interface IssuedTo {
   to: string; // email address or wallet address
   status: ClaimStatus;
-  bound?: boolean; // true or false, only if eventtoken is BOE
+  bound?: boolean; // true or false, only if TokenData.boe = true
   claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
   code?: string; // secret code - for emails
   tokenId?: number | undefined;
@@ -474,6 +474,8 @@ interface TokenAttributes {
 
 ### TokenData
 
+This is the main object within the Soulbind ecosystem. When you create a token (see [create()](#create) or our [create page](https://app.soulbind.app/create)) the Soulbind contract generates this object based on the data received. When users claim this token, data about that claim will be added to the issuedTo array. This includes who claimed the token in the form of a wallet address and the token's on-chain ID (tokenId).
+
 ```js
 interface TokenData {
   boe: boolean; // Bind on equip. Makes the token an NFT (true) or SBT (false)
@@ -483,7 +485,7 @@ interface TokenData {
   created: number;
   id: string; // eventId
   idHash: string; // hash of eventId
-  issuedTo: IssuedTo[]; // both email and wallet addresses live here
+  issuedTo: IssuedTo[]; // data about individual claims lives here
   limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
