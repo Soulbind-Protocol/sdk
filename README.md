@@ -8,6 +8,9 @@ A complete soulbound token solution in JavaScript (and TypeScript).
 
 ### Definitions -->
 
+## Platform
+Want to see what's possible? Check out the site we built with this SDK: [app.soulbind.app](https://app.soulbind.app/create)
+
 ## Installation
 
 ### Using NPM
