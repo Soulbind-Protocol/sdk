@@ -2,7 +2,7 @@ import CryptoES from 'crypto-es';
 import { ethers } from 'ethers';
 
 import { Base } from '../base';
-import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, RequestMethod, TokenData } from './types';
+import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, RequestMethod, TokenData } from './types';
 
 const basePath = 'contract';
 const versionPath = `/v1/${basePath}`
@@ -15,11 +15,11 @@ export class Contract extends Base {
   // Create
 
   /**
-  * @param data: CreateRequest data
+  * @param data: CreateRequest
   * @returns: {success?: 'txnHashString'; errorCode?: ErrorCode}
   * @dev: Create SBT event.
   */
-  public create(data: CreateRequest): Promise<ApiResponse<TokenData>> {
+  public createToken(data: CreateRequest): Promise<ApiResponse<TokenData>> {
     return this.request(`${versionPath}/create`, {
       method: RequestMethod.post,
       body: JSON.stringify(data),
@@ -46,7 +46,7 @@ export class Contract extends Base {
   * @dev: Get created SBT events that your address or other tenant has created.
   */
   public getAccountTokensFiltered(address: string, signature: string, message: string, tenantId?: string): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/created-tokens/${address}/${signature}?message=${message}${tenantId ? '&tenantId=' + tenantId : ''}`, {
+    return this.request(`${versionPath}/created-tokens/${address}/${signature}?message=${encodeURIComponent(message)}${tenantId ? '&tenantId=' + tenantId : ''}`, {
       method: RequestMethod.get,
     });
   }
@@ -209,7 +209,7 @@ export class Contract extends Base {
   * @returns: Message ready to be signed by user.
   */
   public getSignatureMessage(address: string): string {
-    const randomValues = CryptoES.SHA256(CryptoES.lib.WordArray.random(128/8)).toString(CryptoES.enc.Base64);
+    const randomValues = CryptoES.SHA256(CryptoES.lib.WordArray.random(128 / 8)).toString(CryptoES.enc.Base64);
     const rawMessage = `Signing confirms that you own this address:\n${address}\n~~Security~~\nTimestamp: ${Date.now()}\nNonce: ${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(randomValues))}`;
     return `${rawMessage}\nHash: ${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rawMessage))}`;
   }
@@ -219,4 +219,14 @@ export class Contract extends Base {
   */
 
 
+}
+
+type SetRequired<BaseType, Keys extends keyof BaseType> =
+  BaseType &
+  Omit<BaseType, Keys> &
+  Required<Pick<BaseType, Keys>>;
+
+interface ObjectConstructor {
+  hasOwn<BaseType, Key extends keyof BaseType>(record: BaseType, key: Key): record is SetRequired<BaseType, Key>
+  hasOwn<Key extends PropertyKey>(record: object, key: Key): record is { [K in Key]: unknown }
 }
