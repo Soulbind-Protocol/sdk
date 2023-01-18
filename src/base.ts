@@ -6,6 +6,7 @@ import { RequestMethod } from './requests/types';
 type Config = {
   apiKey: string;
   baseUrl?: string;
+  testnet?: boolean;
 };
 
 export abstract class Base {
@@ -13,8 +14,8 @@ export abstract class Base {
   private baseUrl: string;
 
   constructor(config: Config) {
-    this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || 'https://api.soulbind.app/api';
+    this.apiKey = config.apiKey;    
+    this.baseUrl = config.baseUrl || (config.testnet ? 'https://testnet.soulbind.app/api' :'https://api.soulbind.app/api');
   }
 
   async request<T>(endpoint: string, options?: RequestInit): Promise<T> {

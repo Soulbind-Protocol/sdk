@@ -34,6 +34,7 @@ import Soulbind from '@soulbind/sdk';
 
 const soulbind = new Soulbind({
     apiKey: 'YourApiKeyHere',
+    // testnet: true, // Use this in your dev/test environments.
 });
 
 const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3259aec9b');
@@ -224,7 +225,10 @@ console.log(success);
 
 ### create
 
-(coming soon) Create a token event.
+createFile([FileUploadRequest](#fileuploadrequest))
+createToken(data: CreateRequest)
+
+Token creation is a 2-step process that involves uploading a token image and its metadata to IPFS and then creating a Token on the Soulbind protocol.
 
 **NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create)
 
@@ -277,13 +281,12 @@ console.log(success);
 
 **NOTE:** _required with most txn_
 
-getSignatureMessage(address, preventArrayify?): Uint8Array | string
+getSignatureMessage(address): string
 
 Construct a formatted message to be signed by user and passed to Soulbind txn methods.
 
 ```js
   // Specific signature message used below
-  // NOTE: If you provider does not need an Uint8Array message, use soulbind.getSignatureMessage(address, true)
   const signatureMessage = soulbind.getSignatureMessage(address);
 
   // This example uses ethers.js to get a signer - use w/e method you currently have to get a signer.
@@ -422,6 +425,25 @@ enum ClaimStatus {
 }
 ```
 
+### CreateRequest
+
+```js
+export interface CreateRequest {
+  address: string;
+  boe: boolean;
+  burnAuth: BurnAuth;
+  metaData: SbtMetadata;
+  restricted: boolean;
+  signature: string;
+  tokenUri: string; // must be in the format: 'ipfs://<CID>/metadata.json'
+  // restricted = false
+  tokenLimit?: number,
+  // restricted = true
+  issuedToCodes?: IssuedTo[],
+  issuedToWalletAddresses?: IssuedTo[],
+}
+```
+
 ### ErrorCode
 
 ```js
@@ -432,6 +454,16 @@ enum ErrorCode {
   unauthorized = 'Unauthorized',
 }
 ```
+
+### FileUploadRequest
+
+```js
+export interface FileUploadRequest extends SbtMetadata {
+  file: File; // js native file object
+}
+```
+
+Reference: [SbtMetadata](#sbtmetadata), [File](https://developer.mozilla.org/en-US/docs/Web/API/File)
 
 ### IssuedTo
 

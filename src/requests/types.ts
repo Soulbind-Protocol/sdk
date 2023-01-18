@@ -51,19 +51,27 @@ export interface ClaimRequest {
 }
 
 export interface CreateRequest {
-  id: string // EventId
-  tokenUri: string;
+  address: string;
   boe: boolean;
   burnAuth: BurnAuth;
-  address: string;
-  signature: string;
-  restricted: boolean;
   metaData: SbtMetadata;
-  // non-issued
+  restricted: boolean;
+  signature: string;
+  tokenUri: string; // must be in the format: 'ipfs://<CID>/metadata.json'
+  // restricted = true
   tokenLimit?: number,
-  // pre-issued
-  issuedToWalletAddresses?: IssuedTo[],
+  // restricted = false
   issuedToCodes?: IssuedTo[],
+  issuedToWalletAddresses?: IssuedTo[],
+}
+
+export interface FileUploadReturn {
+  uri: string;
+  metaData: SbtMetadata;
+}
+
+export interface FileUploadRequest extends SbtMetadata {
+  file: File;
 }
 
 export interface IssuedTo {

@@ -19,12 +19,12 @@ export class Contract extends Base {
   * @returns: {success?: 'txnHashString'; errorCode?: ErrorCode}
   * @dev: Create SBT event.
   */
-  public createToken(data: CreateRequest): Promise<ApiResponse<TokenData>> {
-    return this.request(`${versionPath}/create`, {
-      method: RequestMethod.post,
-      body: JSON.stringify(data),
-    });
-  }
+  // public createToken(data: CreateRequest): Promise<ApiResponse<TokenData>> {
+  //   return this.request(`${versionPath}/create`, {
+  //     method: RequestMethod.post,
+  //     body: JSON.stringify(data),
+  //   });
+  // }
 
   // Read
   /**
