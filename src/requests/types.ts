@@ -99,6 +99,11 @@ export interface SbtMetadata {
   attributes: TokenAttributes[];
 }
 
+export interface Tenant {
+  id: string;
+  name: string;
+}
+
 export interface TokenAttributes {
   trait_type: string;
   value: string | number;
@@ -116,6 +121,8 @@ export interface TokenData {
   limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
+  tenant: Tenant;
+  updatable: boolean; // Set at create time. Toggles if a token is updatable.
   restricted: boolean; // Pre-issued tokens = true
   txnHash: string; // Hash of the create transaction
 }

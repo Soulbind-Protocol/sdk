@@ -75,6 +75,7 @@ console.log(success);
   - [ErrorCode](#errorcode)
   - [IssuedTo](#issuedto)
   - [SbtMetadata](#sbtmetadata)
+  - [Tenant](#tenant)
   - [TokenAttributes](#tokenattributes)
   - [TokenData](#tokendata) - main object.
 
@@ -495,6 +496,15 @@ interface SbtMetadata {
 
 Reference: [TokenAttributes](#tokenattributes)
 
+### Tenant
+
+```js
+export interface Tenant {
+  id: string;
+  name: string;
+}
+```
+
 ### TokenAttributes
 
 ```js
@@ -521,9 +531,10 @@ interface TokenData {
   limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
+  tenant: Tenant;
   restricted: boolean; // Pre-issued tokens = true
   txnHash: string; // Hash of the create transaction
 }
 ```
 
-Reference: [BurnAuth](#burnauth), [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata)
+Reference: [BurnAuth](#burnauth), [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata), [Tenant](#tenant)

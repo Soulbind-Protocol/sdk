@@ -65,6 +65,16 @@ export class Contract extends Base {
   }
 
   /**
+  * @dev: Get a created SBT event with all issuedTo tokens returned
+  */
+  public getCreatedTokenAsAdmin(eventId: string, address: string, signature: string, message: string): Promise<ApiResponse<TokenData>> {
+    return this.request(`${versionPath}/created-token/${eventId}`, {
+      method: RequestMethod.post,
+      body: JSON.stringify({ address, signature, message }),
+    });
+  }
+
+  /**
   * @param address: a users address.
   * @param filter: set as true to return tokens for your organization only.
   * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
