@@ -65,6 +65,16 @@ export interface CreateRequest {
   issuedToWalletAddresses?: IssuedTo[],
 }
 
+export interface UpdateRequest {
+  address: string;
+  eventId: string;
+  message: string;
+  metaData: SbtMetadata;
+  signature: string;
+  tokenId: string;
+  tokenUri: string; // must be in the format: 'ipfs://<CID>/metadata.json'
+}
+
 export interface FileUploadReturn {
   uri: string;
   metaData: SbtMetadata;
@@ -80,6 +90,7 @@ export interface IssuedTo {
   bound?: boolean; // true or false, only if eventtoken is BOE
   claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
   code?: string; // secret code - for emails
+  metaData?: SbtMetadata; // If token was updated, its data will be here.
   tokenId?: number | undefined;
   txnHash?: string; // Hash of the transaction that minted the token
 }
@@ -94,7 +105,7 @@ export enum RequestMethod {
 export interface SbtMetadata {
   description: string;
   external_url: string;
-  image: string; // IPFS URI
+  image: string; // Cloud replicated URL of data that exists on IPFS
   name: string;
   attributes: TokenAttributes[];
 }

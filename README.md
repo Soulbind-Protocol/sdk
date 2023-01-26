@@ -316,22 +316,19 @@ console.log(success);
 
 ### update
 
-<!-- update(tokenId, eventId, metadata, address, signature, message): Promise<[ApiResponse](#apiresponse)<boolean\>> -->
+update(updateRequest: [UpdateRequest](#updaterequest)): Promise<[ApiResponse](#apiresponse)<string\>>
 
-(coming soon) Update a token.
+Update a single token. Returns the update txn hash.
 
-<!-- TODO(nocs): update this with an individual token get - based on tokenId -->
-
-<!-- ```js
-const tokenId = 'TokenIdHere';
-const eventId = 'EventIdHere';
-const issuersAddress = await signer.getAddress();
+```js
 const message = soulbind.getSignatureMessage(address);
+const issuersAddress = await signer.getAddress();
 const IssuersSignature = await signer.signMessage(message);
 
 const newMetadata = {
-  name: 'Awesome blossom'
-  description: 'This token represents your level.'
+  name: 'Awesome blossom',
+  description: 'This token represents your level.',
+  external_url: 'https://soulbind.app',
   attributes: [
     {
       "trait_type": "Level",
@@ -340,10 +337,20 @@ const newMetadata = {
   ]
 }
 
-const { success } = await soulbind.update(tokenId, eventId, issuersAddress, IssuersSignature, message);
+const updateRequest = {
+  address: issuersAddress,
+  eventId: 'EventIdHere',
+  message,
+  metaData: newMetadata,
+  signature: IssuersSignature,
+  tokenId: 'TokenIdHere', // ID of the token you will be updating.
+  tokenUri: 'TokenUriHere',
+}
+
+const { success } = await soulbind.update(updateRequest);
 console.log(success);
-// Output: true
-``` -->
+// Output: txnHash
+```
 
 ### validateClaimAuthAddress
 
@@ -445,6 +452,20 @@ export interface CreateRequest {
 }
 ```
 
+### UpdateRequest
+
+```js
+export interface UpdateRequest {
+  address: string;
+  eventId: string;
+  message: string;
+  metaData: SbtMetadata;
+  signature: string;
+  tokenId: string;
+  tokenUri: string; // must be in the format: 'ipfs://<CID>/metadata.json'
+}
+```
+
 ### ErrorCode
 
 ```js
@@ -475,12 +496,13 @@ interface IssuedTo {
   bound?: boolean; // true or false, only if TokenData.boe = true
   claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
   code?: string; // secret code - for emails
+  metaData?: SbtMetadata; // If token was updated, its data will be here.
   tokenId?: number | undefined;
   txnHash?: string; // Hash of the transaction that minted the token
 }
 ```
 
-Reference: [ClaimStatus](#claimstatus)
+Reference: [ClaimStatus](#claimstatus), [SbtMetadata](#SbtMetadata)
 
 ### SbtMetadata
 

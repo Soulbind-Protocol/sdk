@@ -2,7 +2,7 @@ import CryptoES from 'crypto-es';
 import { ethers } from 'ethers';
 
 import { Base } from '../base';
-import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, RequestMethod, TokenData } from './types';
+import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, RequestMethod, TokenData, UpdateRequest } from './types';
 
 const basePath = 'contract';
 const versionPath = `/v1/${basePath}`
@@ -199,6 +199,18 @@ export class Contract extends Base {
     return this.request(`${versionPath}/claim`, {
       method: RequestMethod.patch,
       body: JSON.stringify(claimRequest),
+    });
+  }
+
+  /**
+  * @param updateRequest: UpdateRequest object
+  * @returns: {success?: 'txnHash'; errorCode?: ErrorCode}
+  * * @dev: Update a single token.
+  */
+  public async update(updateRequest: UpdateRequest): Promise<ApiResponse<string>> {    
+    return this.request(`${versionPath}/update`, {
+      method: RequestMethod.patch,
+      body: JSON.stringify(updateRequest),
     });
   }
 
