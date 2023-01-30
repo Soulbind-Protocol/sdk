@@ -306,7 +306,7 @@ Construct a formatted message to be signed by user and passed to Soulbind txn me
 
 getTokens(address, filter?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)[]>>
 
-Get all SBTs for an address. If `filter = true`, only tokens for your organization will be returned.
+Get all SBTs for an address. For filter options see: [FilterType](#filtertype).
 
 ```js
 const { success } = await soulbind.getTokens('0xab5801a7d398351b8be11c439e05c5b3259aec9b');
@@ -486,6 +486,15 @@ export interface FileUploadRequest extends SbtMetadata {
 ```
 
 Reference: [SbtMetadata](#sbtmetadata), [File](https://developer.mozilla.org/en-US/docs/Web/API/File)
+
+### FilterType
+
+``` js
+export interface FilterType {
+  organization?: boolean, // return user owned tokens that your org has created.
+  canClaim?: boolean, // return restricted tokens that have been issued but not claimed by the user.
+}
+```
 
 ### IssuedTo
 

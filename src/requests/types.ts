@@ -84,6 +84,11 @@ export interface FileUploadRequest extends SbtMetadata {
   file: File;
 }
 
+export interface FilterType {
+  organization?: boolean, // return user owned tokens that your org has created.
+  canClaim?: boolean, // return restricted tokens that have been issued but not claimed by the user.
+}
+
 export interface IssuedTo {
   to: string; // email address or wallet address
   status: ClaimStatus;

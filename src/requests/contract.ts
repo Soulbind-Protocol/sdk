@@ -2,7 +2,7 @@ import CryptoES from 'crypto-es';
 import { ethers } from 'ethers';
 
 import { Base } from '../base';
-import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, RequestMethod, TokenData, UpdateRequest } from './types';
+import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, FilterType, RequestMethod, TokenData, UpdateRequest } from './types';
 
 const basePath = 'contract';
 const versionPath = `/v1/${basePath}`
@@ -76,12 +76,21 @@ export class Contract extends Base {
 
   /**
   * @param address: a users address.
-  * @param filter: set as true to return tokens for your organization only.
+  * @param filter: filter by pre-defined field. i.e. filter = { organization: true } will return user owned tokens that your org has created.
   * @returns: {success?: TokenData[]; errorCode?: ErrorCode}
   * @dev: Get SBTs for an address.
   */
-  public getTokens(address: string, filter?: boolean): Promise<ApiResponse<TokenData[]>> {
-    return this.request(`${versionPath}/tokens/${address}${filter ? '?filter=' + filter : ''}`, {
+  public getTokens(address: string, filter?: FilterType): Promise<ApiResponse<TokenData[]>> {
+    let filterParsed: FilterType;
+    if (filter) {
+      filterParsed = Object.fromEntries(
+        Object.entries(filter).map(
+          ([key, value]) => value && (key === 'organization' || key === 'canClaim' ? [key, true] : [])
+        )
+      );
+    }
+
+    return this.request(`${versionPath}/tokens/${address}${filterParsed ? '?' + new URLSearchParams(filterParsed as any).toString() : ''}`, {
       method: RequestMethod.get,
     });
   }
@@ -207,7 +216,7 @@ export class Contract extends Base {
   * @returns: {success?: 'txnHash'; errorCode?: ErrorCode}
   * * @dev: Update a single token.
   */
-  public async update(updateRequest: UpdateRequest): Promise<ApiResponse<string>> {    
+  public async update(updateRequest: UpdateRequest): Promise<ApiResponse<string>> {
     return this.request(`${versionPath}/update`, {
       method: RequestMethod.patch,
       body: JSON.stringify(updateRequest),
@@ -243,12 +252,3 @@ export class Contract extends Base {
 
 }
 
-type SetRequired<BaseType, Keys extends keyof BaseType> =
-  BaseType &
-  Omit<BaseType, Keys> &
-  Required<Pick<BaseType, Keys>>;
-
-interface ObjectConstructor {
-  hasOwn<BaseType, Key extends keyof BaseType>(record: BaseType, key: Key): record is SetRequired<BaseType, Key>
-  hasOwn<Key extends PropertyKey>(record: object, key: Key): record is { [K in Key]: unknown }
-}
