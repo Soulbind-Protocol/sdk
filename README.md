@@ -45,9 +45,9 @@ console.log(success);
 # Table of Contents
 
 - [Features](#features)
-  - [Bind on Equip (BoE)](#bind-on-equip-boe)
   - [Burn Auth](#burn-authorization)
   - [Restricted](#restricted)
+  - [Transferable (until bound)](#transferable-until-bound)
   - [Updatable](#updatable)
 - [Email](#email) - seamlessly onboard users via email.
   - [Connect](#emailconnect)
@@ -81,12 +81,6 @@ console.log(success);
 
 # Features
 
-## Bind on Equip (BoE)
-
-Toggling this on will allow a token to be transferred until bound. After a user claims this token, they will have the ability to transfer this token at will. Users who own this token can choose to "[Soulbind](#bind)" it, preventing it from being transferred further.
-
-Data on who has bound (or not bound) a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
-
 ## Burn Authorization
 
 This allows you to set a token Burn Auth. Or in other words, after a token has been claimed, this will determine who has the right to burn/delete that token.
@@ -98,6 +92,14 @@ Options: Issuer (you), Claimer, Both, Neither.
 Toggling this on allows you to pre-issue tokens to wallet AND/OR email addresses.
 
 Data on who has claimed a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
+
+## Transferable (until bound)
+
+Toggling this on will allow a token to be transferred until bound. After a user claims this token, they will have the ability to transfer this token at will. Users who own this token can choose to "[Soulbind](#bind)" it, preventing it from being transferred further.
+
+Data on who has bound (or not bound) a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
+
+In our data structures, you will see this represented as BoE (Bind on Equip).
 
 ## Updatable
 
