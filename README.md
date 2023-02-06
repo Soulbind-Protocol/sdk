@@ -58,6 +58,7 @@ console.log(success);
   - [Bind](#bind)
   - [Burn](#burn)
   - [Claim](#claim)
+  - [Drop](#drop)
   - [Create](#create)
   - [Get Created Account Tokens](#getaccounttokens)
   - [Get Created Account Tokens Filtered](#getaccounttokensfiltered)
@@ -224,6 +225,24 @@ const { success } = await soulbind.claim(
 );
 console.log(success);
 // Output: tokenId
+```
+
+### drop
+
+drop(eventId, dropTo): Promise<[ApiResponse](#apiresponse)<string[]\>>
+
+Drops a token to any number of addresses. This functions like a bulk [claim](#claim) that does not require receiver interaction.
+
+**NOTE:** Only works with tokens that have BurnAuth.OwnerOnly OR BurnAuth.Both.
+
+```js
+  const dropTo = ['0xA1d04574E852cB814465E19220d06d04cDb272af', '0x3C229411128107734DCEA2c0b2Bd3B47755Fce16']
+const { success } = await soulbind.drop(
+  'EventIdHere',
+  dropTo
+);
+console.log(success);
+// Output: ['txnHash', 'txnHash']
 ```
 
 ### create

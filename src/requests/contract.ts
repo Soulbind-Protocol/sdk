@@ -212,6 +212,19 @@ export class Contract extends Base {
   }
 
   /**
+  * @param eventId: string of eventId.
+  * @param dropTo: Array of addresses to drop to.
+  * @returns: {success?: 'txnHashes'[]; errorCode?: ErrorCode}
+  * * @dev: Drop a token to any number of addresses. Only works with tokens that have BurnAuth.OwnerOnly OR BurnAuth.Both.
+  */
+  public async drop(eventId: string, dropTo: string[]): Promise<ApiResponse<string>> {
+    return this.request(`${versionPath}/drop`, {
+      method: RequestMethod.patch,
+      body: JSON.stringify({ eventId, dropTo }),
+    });
+  }
+
+  /**
   * @param updateRequest: UpdateRequest object
   * @returns: {success?: 'txnHash'; errorCode?: ErrorCode}
   * * @dev: Update a single token.
