@@ -26,6 +26,16 @@ export interface ApiResponse<T> {
   success?: T;
 }
 
+export interface AddToIssuedRequest {
+  addresses?: string[]; // (optional) Array of addresses to add to whitelist.
+  codeCount?: number; // (optional) Number representing how many unique codes to generate.
+}
+
+export interface AuthorizationRequest {
+  signature: string;
+  message: string;
+}
+
 export interface BindRequest {
   address: string;
   eventId: string;
@@ -41,6 +51,7 @@ export interface BurnRequest {
   signature: string;
   tokenId: string;
 }
+
 
 export interface ClaimRequest {
   address: string;

@@ -9,6 +9,7 @@ A complete soulbound token solution in JavaScript (and TypeScript).
 ### Definitions -->
 
 ## Platform
+
 Want to see what's possible? Check out the site we built with this SDK: [app.soulbind.app](https://app.soulbind.app/create)
 
 ## Installation
@@ -55,6 +56,7 @@ console.log(success);
   - [Get Signature](#getemailsignature)
   - [Get Address](#getemailwalletaddress)
 - [Core](#core) - core methods for your soulbound tokens.
+  - [Add To Issued](#addtoissued)
   - [Bind](#bind)
   - [Burn](#burn)
   - [Claim](#claim)
@@ -65,6 +67,7 @@ console.log(success);
   - [Get Created Token](#getcreatedtoken)
   - [Get Signature Message](#getsignaturemessage)
   - [Get Tokens](#gettokens) - get all SBTs for a given address
+  - [Increase Token Limit](#increaseTokenLimit)
   - [Update](#update)
   - [Validate Address Claim Authorization](#validateclaimauthaddress)
   - [Validate Code Claim Authorization](#validateclaimauthcode)
@@ -162,6 +165,33 @@ console.log(address);
 
 These are the core methods for your soulbound tokens.
 
+### addToIssued
+
+addToIssued(eventId, [AddToIssuedRequest](#addtoissuedrequest), [AuthorizationRequest](#authorizationrequest)): Promise<[ApiResponse](#apiresponse)<string[]\>>
+
+Issues more tokens or unique codes. Accepts address whitelist, unique codes, or both.
+
+```js
+const authorizedAddress = await signer.getAddress();
+const authorizedMessage = soulbind.getSignatureMessage(authorizedAddress);
+const authorizersSignature = await signer.signMessage(authorizedMessage);
+
+const data = {
+  addresses: [
+    '0xA1d04574E852cB814465E19220d06d04cDb272af',
+    '0x3C229411128107734DCEA2c0b2Bd3B47755Fce16',
+  ],
+  codeCount: 5, // Generates 5 more unique codes.
+};
+
+const { success } = await soulbind.addToIssued('EventIdHere', data, {
+  signature: authorizersSignature,
+  message: authorizedMessage,
+});
+console.log(success);
+// Output: 'txnHash'
+```
+
 ### bind
 
 bind(eventId, tokenId, address, signature, message): Promise<[ApiResponse](#apiresponse)<boolean\>>
@@ -229,18 +259,25 @@ console.log(success);
 
 ### drop
 
-drop(eventId, dropTo): Promise<[ApiResponse](#apiresponse)<string[]\>>
+drop(eventId, dropTo, [AuthorizationRequest](#authorizationrequest)): Promise<[ApiResponse](#apiresponse)<string[]\>>
 
 Drops a token to any number of addresses. This functions like a bulk [claim](#claim) that does not require receiver interaction.
 
 **NOTE:** Only works with tokens that have BurnAuth.OwnerOnly OR BurnAuth.Both.
 
 ```js
-  const dropTo = ['0xA1d04574E852cB814465E19220d06d04cDb272af', '0x3C229411128107734DCEA2c0b2Bd3B47755Fce16']
-const { success } = await soulbind.drop(
-  'EventIdHere',
-  dropTo
-);
+const authorizedAddress = await signer.getAddress();
+const authorizedMessage = soulbind.getSignatureMessage(authorizedAddress);
+const authorizersSignature = await signer.signMessage(authorizedMessage);
+
+const dropTo = [
+  '0xA1d04574E852cB814465E19220d06d04cDb272af',
+  '0x3C229411128107734DCEA2c0b2Bd3B47755Fce16',
+];
+const { success } = await soulbind.drop('EventIdHere', dropTo, {
+  signature: authorizersSignature,
+  message: authorizedMessage,
+});
 console.log(success);
 // Output: ['txnHash', 'txnHash']
 ```
@@ -287,7 +324,7 @@ console.log(success);
 
 getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
 
-Get a created SBT - use when you need the most current TokenData directly from chain. 
+Get a created SBT - use when you need the most current TokenData directly from chain.
 Pass in tokenId to populate the issuedTo property with who owns that particular tokenId.
 
 ```js
@@ -335,6 +372,27 @@ console.log(success);
 // Output: TokenData[]
 ```
 
+### increaseTokenLimit
+
+increaseTokenLimit(eventId, limitIncrease, [AuthorizationRequest](#authorizationrequest)): Promise<[ApiResponse](#apiresponse)<string[]\>>
+
+Increase token limit of a non-restricted token.
+
+```js
+const authorizedAddress = await signer.getAddress();
+const authorizedMessage = soulbind.getSignatureMessage(authorizedAddress);
+const authorizersSignature = await signer.signMessage(authorizedMessage);
+
+const limitIncrease = 5;
+
+const { success } = await soulbind.increaseTokenLimit('EventIdHere', limitIncrease, {
+  signature: authorizersSignature,
+  message: authorizedMessage,
+});
+console.log(success);
+// Output: 'txnHash'
+```
+
 ### update
 
 update(updateRequest: [UpdateRequest](#updaterequest)): Promise<[ApiResponse](#apiresponse)<string\>>
@@ -352,11 +410,11 @@ const newMetadata = {
   external_url: 'https://soulbind.app',
   attributes: [
     {
-      "trait_type": "Level",
-      "value": "2"
+      trait_type: 'Level',
+      value: '2',
     },
-  ]
-}
+  ],
+};
 
 const updateRequest = {
   address: issuersAddress,
@@ -366,7 +424,7 @@ const updateRequest = {
   signature: IssuersSignature,
   tokenId: 'TokenIdHere', // ID of the token you will be updating.
   tokenUri: 'TokenUriHere',
-}
+};
 
 const { success } = await soulbind.update(updateRequest);
 console.log(success);
@@ -421,6 +479,24 @@ console.log(success);
 
 ## Models
 
+### AddToIssuedRequest
+
+```js
+interface AddToIssuedRequest {
+  addresses?: string[]; // (optional) Array of addresses to add to whitelist.
+  codeCount?: number; // (optional) Number representing how many unique codes to generate.
+}
+```
+
+### AuthorizationRequest
+
+```js
+interface AuthorizationRequest {
+  signature: string;
+  message: string;
+}
+```
+
 ### ApiResponse
 
 ```js
@@ -466,10 +542,10 @@ export interface CreateRequest {
   signature: string;
   tokenUri: string; // must be in the format: 'ipfs://<CID>/metadata.json'
   // restricted = false
-  tokenLimit?: number,
+  tokenLimit?: number;
   // restricted = true
-  issuedToCodes?: IssuedTo[],
-  issuedToWalletAddresses?: IssuedTo[],
+  issuedToCodes?: IssuedTo[];
+  issuedToWalletAddresses?: IssuedTo[];
 }
 ```
 
@@ -510,10 +586,10 @@ Reference: [SbtMetadata](#sbtmetadata), [File](https://developer.mozilla.org/en-
 
 ### FilterType
 
-``` js
+```js
 export interface FilterType {
-  organization?: boolean, // return user owned tokens that your org has created.
-  canClaim?: boolean, // return restricted tokens that have been issued but not claimed by the user.
+  organization?: boolean; // return user owned tokens that your org has created.
+  canClaim?: boolean; // return restricted tokens that have been issued but not claimed by the user.
 }
 ```
 

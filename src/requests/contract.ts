@@ -2,7 +2,7 @@ import CryptoES from 'crypto-es';
 import { ethers } from 'ethers';
 
 import { Base } from '../base';
-import { ApiResponse, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, FilterType, RequestMethod, TokenData, UpdateRequest } from './types';
+import { AddToIssuedRequest, ApiResponse, AuthorizationRequest, BindRequest, BurnRequest, ClaimRequest, CreateRequest, ErrorCode, FileUploadRequest, FileUploadReturn, FilterType, RequestMethod, TokenData, UpdateRequest } from './types';
 
 const basePath = 'contract';
 const versionPath = `/v1/${basePath}`
@@ -133,6 +133,25 @@ export class Contract extends Base {
   }
 
   // Update
+  /**
+  * @param eventId: string of eventId.
+  * @param data: {addresses, codeCount} See AddToIssuedRequest.
+  * @param authorization: {signature, message} See AuthorizationRequest.
+  * @returns: {success?: 'txnHash'; errorCode?: ErrorCode}
+  * * @dev: Issues more tokens to users for future claiming. Add to address whitelist or add more unique codes.
+  */
+  public async addToIssued(eventId: string, data: AddToIssuedRequest, authorization: AuthorizationRequest): Promise<ApiResponse<string>> {
+    return this.request(`${versionPath}/add-issued-to`, {
+      method: RequestMethod.patch,
+      body: JSON.stringify({
+        eventId,
+        addresses: data.addresses,
+        codeCount: data.codeCount,
+        signature: authorization.signature,
+        message: authorization.message
+      }),
+    });
+  }
 
   /**
   * @param eventId: string of eventId.
@@ -214,13 +233,37 @@ export class Contract extends Base {
   /**
   * @param eventId: string of eventId.
   * @param dropTo: Array of addresses to drop to.
+  * @param authorization: {signature, message} See AuthorizationRequest.
   * @returns: {success?: 'txnHashes'[]; errorCode?: ErrorCode}
   * * @dev: Drop a token to any number of addresses. Only works with tokens that have BurnAuth.OwnerOnly OR BurnAuth.Both.
   */
-  public async drop(eventId: string, dropTo: string[]): Promise<ApiResponse<string>> {
+  public async drop(eventId: string, dropTo: string[], authorization: AuthorizationRequest): Promise<ApiResponse<string>> {
     return this.request(`${versionPath}/drop`, {
       method: RequestMethod.patch,
-      body: JSON.stringify({ eventId, dropTo }),
+      body: JSON.stringify({
+        eventId,
+        dropTo, signature: authorization.signature,
+        message: authorization.message
+      }),
+    });
+  }
+
+  /**
+  * @param eventId: string of eventId.
+  * @param limitIncrease: Amount of additional possible tokens you want to add.
+  * @param authorization: {signature, message} See AuthorizationRequest.
+  * @returns: {success?: 'txnHash'; errorCode?: ErrorCode}
+  * * @dev: Increase token limit of a non-restricted token.
+  */
+  public async increaseTokenLimit(eventId: string, limitIncrease: number, authorization: AuthorizationRequest): Promise<ApiResponse<string>> {
+    return this.request(`${versionPath}/increase-token-limit`, {
+      method: RequestMethod.patch,
+      body: JSON.stringify({
+        eventId,
+        limitIncrease,
+        signature: authorization.signature,
+        message: authorization.message
+      }),
     });
   }
 
