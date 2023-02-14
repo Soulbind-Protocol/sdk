@@ -10,7 +10,7 @@ A complete soulbound token solution in JavaScript (and TypeScript).
 
 ## Platform
 
-Want to see what's possible? Check out the site we built with this SDK: [app.soulbind.app](https://app.soulbind.app/create) or [testnet.soulbind.app](https://testnet.soulbind.app/create)
+Want to see what's possible? Check out the site we built with this SDK: [mainnet](https://app.soulbind.app/create) or [testnet](https://testnet.soulbind.app/create)
 
 ## Installation
 
@@ -95,13 +95,13 @@ Options: Issuer (you), Claimer, Both, Neither.
 
 Toggling this on allows you to pre-issue tokens to wallet AND/OR email addresses.
 
-Data on who has claimed a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
+Data on who has claimed a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page ([mainnet](https://app.soulbind.app/manage) / [testnet](https://testnet.soulbind.app/manage)).
 
 ## Transferable (until bound)
 
 Toggling this on will allow a token to be transferred until bound. After a user claims this token, they will have the ability to transfer this token at will. Users who own this token can choose to "[Soulbind](#bind)" it, preventing it from being transferred further.
 
-Data on who has bound (or not bound) a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page (coming soon).
+Data on who has bound (or not bound) a token can be surfaced via our [Core Methods](#core) or within the Soulbind Token Management page ([mainnet](https://app.soulbind.app/manage) / [testnet](https://testnet.soulbind.app/manage)).
 
 In our data structures, you will see this represented as BoE (Bind on Equip).
 
@@ -289,7 +289,7 @@ createToken(data: CreateRequest)
 
 Token creation is a 2-step process that involves uploading a token image and its metadata to IPFS and then creating a Token on the Soulbind protocol.
 
-**NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create) or [Soulbind Testnet](https://testnet.soulbind.app/create)
+**NOTE:** This is in development. In the interim, use: Soulbind Create Page ([mainnet](https://app.soulbind.app/create) / [testnet](https://testnet.soulbind.app/create))
 
 ### getAccountTokens
 
@@ -644,7 +644,7 @@ interface TokenAttributes {
 
 ### TokenData
 
-This is the main object within the Soulbind ecosystem. When you create a token (see [create()](#create) or our [create page](https://app.soulbind.app/create)) the Soulbind contract generates this object based on the data received. When users claim this token, data about that claim will be added to the issuedTo array. This includes who claimed the token in the form of a wallet address and the token's on-chain ID (tokenId).
+This is the main object within the Soulbind ecosystem. When you create a token (see [create()](#create) or our create page [mainnet](https://app.soulbind.app/create) / [testnet](https://testnet.soulbind.app/create)) the Soulbind contract generates this object based on the data received. When users claim this token, data about that claim will be added to the issuedTo array. This includes who claimed the token in the form of a wallet address and the token's on-chain ID (tokenId).
 
 ```js
 interface TokenData {
