@@ -10,7 +10,7 @@ A complete soulbound token solution in JavaScript (and TypeScript).
 
 ## Platform
 
-Want to see what's possible? Check out the site we built with this SDK: [app.soulbind.app](https://app.soulbind.app/create)
+Want to see what's possible? Check out the site we built with this SDK: [app.soulbind.app](https://app.soulbind.app/create) or [testnet.soulbind.app](https://testnet.soulbind.app/create)
 
 ## Installation
 
@@ -289,7 +289,7 @@ createToken(data: CreateRequest)
 
 Token creation is a 2-step process that involves uploading a token image and its metadata to IPFS and then creating a Token on the Soulbind protocol.
 
-**NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create)
+**NOTE:** This is in development. In the interim, use: [Soulbind Create Page](https://app.soulbind.app/create) or [Soulbind Testnet](https://testnet.soulbind.app/create)
 
 ### getAccountTokens
 
