@@ -77,9 +77,9 @@ console.log(success);
   - [BurnAuth](#burnauth)
   - [ClaimStatus](#claimstatus)
   - [ErrorCode](#errorcode)
-  - [IssuedTo](#issuedto)
   - [SbtMetadata](#sbtmetadata)
   - [Tenant](#tenant)
+  - [Token](#token)
   - [TokenAttributes](#tokenattributes)
   - [TokenData](#tokendata) - main object.
 
@@ -325,7 +325,7 @@ console.log(success);
 getCreatedToken(eventId, tokenId?): Promise<[ApiResponse](#apiresponse)<[TokenData](#tokendata)>>
 
 Get a created SBT - use when you need the most current TokenData directly from chain.
-Pass in tokenId to populate the issuedTo property with who owns that particular tokenId.
+Pass in tokenId to populate the issuedTo property with token owner data.
 
 ```js
 const eventId = 'EventIdHere';
@@ -533,7 +533,7 @@ enum ClaimStatus {
 ### CreateRequest
 
 ```js
-export interface CreateRequest {
+interface CreateRequest {
   address: string;
   boe: boolean;
   burnAuth: BurnAuth;
@@ -544,15 +544,17 @@ export interface CreateRequest {
   // restricted = false
   tokenLimit?: number;
   // restricted = true
-  issuedToCodes?: IssuedTo[];
-  issuedToWalletAddresses?: IssuedTo[];
+  issuedToCodes?: Token[];
+  issuedToWalletAddresses?: Token[];
 }
 ```
+
+Reference: [BurnAuth](#burn-authorization), [SbtMetadata](#sbtmetadata), [Token](#token)
 
 ### UpdateRequest
 
 ```js
-export interface UpdateRequest {
+interface UpdateRequest {
   address: string;
   eventId: string;
   message: string;
@@ -577,7 +579,7 @@ enum ErrorCode {
 ### FileUploadRequest
 
 ```js
-export interface FileUploadRequest extends SbtMetadata {
+interface FileUploadRequest extends SbtMetadata {
   file: File; // js native file object
 }
 ```
@@ -587,24 +589,9 @@ Reference: [SbtMetadata](#sbtmetadata), [File](https://developer.mozilla.org/en-
 ### FilterType
 
 ```js
-export interface FilterType {
+interface FilterType {
   organization?: boolean; // return user owned tokens that your org has created.
   canClaim?: boolean; // return restricted tokens that have been issued but not claimed by the user.
-}
-```
-
-### IssuedTo
-
-```js
-interface IssuedTo {
-  to: string; // email address or wallet address
-  status: ClaimStatus;
-  bound?: boolean; // true or false, only if TokenData.boe = true
-  claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
-  code?: string; // secret code - for emails
-  metaData?: SbtMetadata; // If token was updated, its data will be here.
-  tokenId?: number | undefined;
-  txnHash?: string; // Hash of the transaction that minted the token
 }
 ```
 
@@ -627,9 +614,26 @@ Reference: [TokenAttributes](#tokenattributes)
 ### Tenant
 
 ```js
-export interface Tenant {
+interface Tenant {
   id: string;
   name: string;
+}
+```
+
+### Token
+```js
+interface Token {
+  created: number;
+  eventId: string; // id of the EventToken
+  status: ClaimStatus;
+  to: string; // email address, wallet address, or code
+  bound?: boolean; // true or false, only if eventtoken is BOE
+  claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
+  code?: string; // secret code
+  metaData?: SbtMetadata; // If token was updated, its data will display here.
+  tenantId?: string; // Id of Tenant
+  tokenId?: number | undefined; // On-chain token ID - not available for un-claimed issued tokens
+  txnHash?: string; // Hash of the transaction that minted the token
 }
 ```
 
@@ -655,7 +659,7 @@ interface TokenData {
   created: number;
   id: string; // eventId
   idHash: string; // hash of eventId
-  issuedTo: IssuedTo[]; // data about individual claims lives here
+  issuedTo: Token[]; // Individual claimed/issued tokens
   limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
@@ -665,4 +669,4 @@ interface TokenData {
 }
 ```
 
-Reference: [BurnAuth](#burnauth), [IssuedTo](#issuedto), [SbtMetadata](#sbtmetadata), [Tenant](#tenant)
+Reference: [BurnAuth](#burnauth), [SbtMetadata](#sbtmetadata), [Tenant](#tenant), [Token](#token)

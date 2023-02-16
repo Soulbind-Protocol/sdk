@@ -72,8 +72,8 @@ export interface CreateRequest {
   // restricted = true
   tokenLimit?: number,
   // restricted = false
-  issuedToCodes?: IssuedTo[],
-  issuedToWalletAddresses?: IssuedTo[],
+  issuedToCodes?: Token[],
+  issuedToWalletAddresses?: Token[],
 }
 
 export interface UpdateRequest {
@@ -100,17 +100,6 @@ export interface FilterType {
   canClaim?: boolean, // return restricted tokens that have been issued but not claimed by the user.
 }
 
-export interface IssuedTo {
-  to: string; // email address or wallet address
-  status: ClaimStatus;
-  bound?: boolean; // true or false, only if eventtoken is BOE
-  claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
-  code?: string; // secret code - for emails
-  metaData?: SbtMetadata; // If token was updated, its data will be here.
-  tokenId?: number | undefined;
-  txnHash?: string; // Hash of the transaction that minted the token
-}
-
 export enum RequestMethod {
   delete = 'DELETE',
   get = 'GET',
@@ -131,6 +120,20 @@ export interface Tenant {
   name: string;
 }
 
+export interface Token {
+  created: number;
+  eventId: string; // id of the EventToken
+  status: ClaimStatus;
+  to: string; // email address, wallet address, or code
+  bound?: boolean; // true or false, only if eventtoken is BOE
+  claimersEmail?: string; // added after a uniqueCode claim to retain email addresses
+  code?: string; // secret code
+  metaData?: SbtMetadata; // If token was updated, its data will display here.
+  tenantId?: string; // Id of Tenant
+  tokenId?: number | undefined; // On-chain token ID - not available for un-claimed issuedTokens
+  txnHash?: string; // Hash of the transaction that minted the token
+}
+
 export interface TokenAttributes {
   trait_type: string;
   value: string | number;
@@ -144,7 +147,7 @@ export interface TokenData {
   created: number;
   id: string; // eventId
   idHash: string; // hash of eventId
-  issuedTo: IssuedTo[]; // both email and wallet addresses live here
+  issuedTo: Token[]; // Individual claimed/issued tokens
   limit: number;
   metaData: SbtMetadata;
   owner: string; // issuer wallet address
