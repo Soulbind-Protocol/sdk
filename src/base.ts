@@ -15,7 +15,7 @@ export abstract class Base {
 
   constructor(config: Config) {
     this.apiKey = config.apiKey;    
-    this.baseUrl = config.baseUrl || (config.testnet ? 'https://testnet.soulbind.app/api' :'https://api.soulbind.app/api');
+    this.baseUrl = config.baseUrl || (config.testnet ? 'https://api-testnet.soulbind.app/api' :'https://api.soulbind.app/api');
   }
 
   async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
